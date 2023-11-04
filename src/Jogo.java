@@ -1,3 +1,4 @@
+import javax.sound.sampled.Port;
 import java.util.ArrayList;
 
 /**
@@ -35,11 +36,13 @@ public class Jogo {
     private void criarAmbientes() {
 
         //FASE 1
-        Ambiente fora, salaEntrada, sala1, sala2, sala3, sala4, portao;
+        Ambiente fora, salaEntrada, sala1, sala2, sala3, sala4;
+        Portao portao1;
         ArrayList<Ambiente> salasFase1 = new ArrayList<>();
 
         //FASE 2
-        Ambiente corredor, salao, sala5, sala6, sala7, sala8, porao, portao2;
+        Ambiente corredor, salao, sala5, sala6, sala7, sala8, porao;
+        Portao portao2;
         ArrayList<Ambiente> salasFase2 =  new ArrayList<>();
 
         //FASE 3
@@ -56,11 +59,11 @@ public class Jogo {
         // cria os ambientes
         fora = new Ambiente("do lado de fora da entrada principal do castelo");
         salaEntrada = new Ambiente("na sala de entrada do castelo");
-        sala1 = new Ambiente("na sala 1", "sala1");
-        sala2 = new Ambiente("na sala 2", "sala2");
-        sala3 = new Ambiente("na sala 3", "sala3");
-        sala4 = new Ambiente("na sala 4", "sala4");
-        portao = new Ambiente("em um grande portão trancado");
+        sala1 = new Ambiente("na sala 1");
+        sala2 = new Ambiente("na sala 2");
+        sala3 = new Ambiente("na sala 3");
+        sala4 = new Ambiente("na sala 4");
+        portao1 = new Portao("em um grande portão trancado");
         salasFase1.add(sala1);
         salasFase1.add(sala2);
         salasFase1.add(sala3);
@@ -68,23 +71,23 @@ public class Jogo {
 
         // inicializa as saidas dos ambientes da primeira fase
         fora.ajustarSaidas( salaEntrada, null, null, null,null);
-        salaEntrada.ajustarSaidas(null, null, portao, fora,salasFase1);
+        salaEntrada.ajustarSaidas(null, null, portao1, fora,salasFase1);
         sala1.ajustarSaidas(null, salaEntrada, null, null,null);
         sala2.ajustarSaidas(null, null, salaEntrada, null,null);
         sala4.ajustarSaidas(null, null, salaEntrada, null,null);
         sala3.ajustarSaidas(null, null, salaEntrada, null,null);
-        portao.ajustarSaidas(corredor, null, salaEntrada, null, null);
+        portao1.ajustarSaidas(corredor, null, salaEntrada, null, null);
 
 
         // FASE 2
         //Cria os ambientes
         salao = new Ambiente("um grande salao quadrado com 4 salas nas laterais e um grande portão em frente");
-        sala5 = new Ambiente("na sala 5", "sala5");
-        sala6 = new Ambiente("na sala 6", "sala6");
-        sala7 = new Ambiente("na sala 7", "sala7");
-        sala8 = new Ambiente("na sala 8", "sala8");
+        sala5 = new Ambiente("na sala 5");
+        sala6 = new Ambiente("na sala 6");
+        sala7 = new Ambiente("na sala 7");
+        sala8 = new Ambiente("na sala 8");
         porao = new Ambiente("Um porao escuro com uma esfinge");
-        portao2 = new Ambiente("em um grande portão trancado");
+        portao2 = new Portao("em um grande portão trancado");
         salasFase2.add(sala5);
         salasFase2.add(sala6);
         salasFase2.add(sala7);
@@ -180,8 +183,8 @@ public class Jogo {
             System.out.print("oeste ");
         }
         if(ambienteAtual.salas != null){
-            for (Ambiente a: ambienteAtual.salas) {
-                System.out.print(a.nomeDoAmbiente + ", ");
+            for(int i=1; i <= ambienteAtual.salas.size(); i++){
+                System.out.print("sala"+i+" ");
             }
         }
         System.out.println();
@@ -244,7 +247,17 @@ public class Jogo {
         // Tenta sair do ambiente atual
         Ambiente proximoAmbiente = null;
         if (direcao.equals("norte")) {
-            proximoAmbiente = ambienteAtual.saidaNorte;
+            if(ambienteAtual instanceof Portao){
+                if(ambienteAtual.estaTrancado()){
+                    System.out.print("O portão está trancado! ");
+                }
+                else{
+                    System.out.println("O protão está aberto! Você passa por ele.");
+                }
+            }
+            else{
+                proximoAmbiente = ambienteAtual.saidaNorte;
+            }
         }
         if (direcao.equals("leste")) {
             proximoAmbiente = ambienteAtual.saidaLeste;
@@ -255,9 +268,10 @@ public class Jogo {
         if (direcao.equals("oeste")) {
             proximoAmbiente = ambienteAtual.saidaOeste;
         }
-        //@TODO implementar verificação de salas possíveis
-        if (direcao.matches("sala[0-8]")){
-            proximoAmbiente = null;
+
+        direcao = direcao.replaceAll("\\D+",""); //Extrai o numero da string de input
+        if (direcao.matches("[1-4]")){
+            proximoAmbiente = ambienteAtual.salas.get(Integer.parseInt(direcao)-1);
         }
 
         if (proximoAmbiente == null) {
@@ -281,8 +295,8 @@ public class Jogo {
                 System.out.print("oeste ");
             }
             if(ambienteAtual.salas != null){
-                for (Ambiente a: ambienteAtual.salas) {
-                    System.out.print(a.nomeDoAmbiente + " ");
+                for(int i=1; i <= ambienteAtual.salas.size(); i++){
+                    System.out.print("sala"+i+" ");
                 }
             }
             System.out.println();

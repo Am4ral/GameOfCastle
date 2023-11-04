@@ -15,7 +15,7 @@ import java.util.ArrayList;
  * @author  Michael Kölling and David J. Barnes (traduzido por Julio Cesar Alves)
  * @version 2011.07.31 (2016.02.01)
  */
-public class Ambiente 
+public class Ambiente
 {
     public String descricao;
     public Ambiente saidaNorte;
@@ -24,7 +24,7 @@ public class Ambiente
     public Ambiente saidaOeste;
     public ArrayList<Ambiente> salas;
 
-    public String nomeDoAmbiente;
+
 
     /**
      * Cria um ambiente com a "descricao" passada. Inicialmente, ele
@@ -38,10 +38,6 @@ public class Ambiente
 
     public Ambiente(String descricao) {
         this.descricao = descricao;
-    }
-    public Ambiente(String descricao, String nomeDoAmbiente) {
-        this.descricao = descricao;
-        this.nomeDoAmbiente = nomeDoAmbiente;
     }
 
     /**
@@ -76,5 +72,14 @@ public class Ambiente
         return descricao;
     }
 
-    public String getNomeDoAmbiente() {return nomeDoAmbiente; }
+
+    /**
+    * Author: Marco
+     * Aqui eu fiquei na dúvida, precisamos verificar se o portão esta trancado.
+     * Mas o metódo tem que existir na classe pai
+    * */
+    public boolean estaTrancado() {
+        return true;
+    }
+
 }

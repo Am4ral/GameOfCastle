@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 /**
  * Essa eh a classe principal da aplicacao "World of Zull".
  * "World of Zuul" eh um jogo de aventura muito simples, baseado em texto.
@@ -31,21 +33,83 @@ public class Jogo {
      * Cria todos os ambientes e liga as saidas deles
      */
     private void criarAmbientes() {
-        Ambiente fora, anfiteatro, cantina, laboratorio, escritorio;
 
+        //FASE 1
+        Ambiente fora, salaEntrada, sala1, sala2, sala3, sala4, portao;
+        ArrayList<Ambiente> salasFase1 = new ArrayList<>();
+
+        //FASE 2
+        Ambiente corredor, salao, sala5, sala6, sala7, sala8, porao, portao2;
+        ArrayList<Ambiente> salasFase2 =  new ArrayList<>();
+
+        //FASE 3
+        Ambiente corredor2, salaTrono;
+
+
+        //OS AMBIENTES QUE INTERLIGAM AS FASES PRECISAM SER INICIALIZADOS ANTES
+        corredor = new Ambiente("um longo corredor frio");
+        corredor2 = new Ambiente("um longo corredor frio, uma figura encapuzada parece te aguardar no final dele");
+
+
+
+        // FASE 1
         // cria os ambientes
-        fora = new Ambiente("do lado de fora da entrada principal de uma universidade");
-        anfiteatro = new Ambiente("no anfiteatro");
-        cantina = new Ambiente("na cantina do campus");
-        laboratorio = new Ambiente("no laboratorio de computacao");
-        escritorio = new Ambiente("na sala de administracao dos computadores");
+        fora = new Ambiente("do lado de fora da entrada principal do castelo");
+        salaEntrada = new Ambiente("na sala de entrada do castelo");
+        sala1 = new Ambiente("na sala 1", "sala1");
+        sala2 = new Ambiente("na sala 2", "sala2");
+        sala3 = new Ambiente("na sala 3", "sala3");
+        sala4 = new Ambiente("na sala 4", "sala4");
+        portao = new Ambiente("em um grande portão trancado");
+        salasFase1.add(sala1);
+        salasFase1.add(sala2);
+        salasFase1.add(sala3);
+        salasFase1.add(sala4);
 
-        // inicializa as saidas dos ambientes
-        fora.ajustarSaidas(null, anfiteatro, laboratorio, cantina);
-        anfiteatro.ajustarSaidas(null, null, null, fora);
-        cantina.ajustarSaidas(null, fora, null, null);
-        laboratorio.ajustarSaidas(fora, escritorio, null, null);
-        escritorio.ajustarSaidas(null, null, null, laboratorio);
+        // inicializa as saidas dos ambientes da primeira fase
+        fora.ajustarSaidas( salaEntrada, null, null, null,null);
+        salaEntrada.ajustarSaidas(null, null, portao, fora,salasFase1);
+        sala1.ajustarSaidas(null, salaEntrada, null, null,null);
+        sala2.ajustarSaidas(null, null, salaEntrada, null,null);
+        sala4.ajustarSaidas(null, null, salaEntrada, null,null);
+        sala3.ajustarSaidas(null, null, salaEntrada, null,null);
+        portao.ajustarSaidas(corredor, null, salaEntrada, null, null);
+
+
+        // FASE 2
+        //Cria os ambientes
+        salao = new Ambiente("um grande salao quadrado com 4 salas nas laterais e um grande portão em frente");
+        sala5 = new Ambiente("na sala 5", "sala5");
+        sala6 = new Ambiente("na sala 6", "sala6");
+        sala7 = new Ambiente("na sala 7", "sala7");
+        sala8 = new Ambiente("na sala 8", "sala8");
+        porao = new Ambiente("Um porao escuro com uma esfinge");
+        portao2 = new Ambiente("em um grande portão trancado");
+        salasFase2.add(sala5);
+        salasFase2.add(sala6);
+        salasFase2.add(sala7);
+        salasFase2.add(sala8);
+
+        //inicializa as saindas dos ambientes da segunda fase
+        corredor.ajustarSaidas(salao,null, salaEntrada, null, null);
+        salao.ajustarSaidas(portao2, null, corredor, null, salasFase2);
+        sala5.ajustarSaidas(null, salaEntrada, null, null, null);
+        sala6.ajustarSaidas(null, salaEntrada, null, null, null);
+        sala7.ajustarSaidas(null, null, null, salaEntrada, null);
+        sala8.ajustarSaidas(null, null, null, salaEntrada, null);
+        porao.ajustarSaidas(null, null, sala5, null, null);
+        portao2.ajustarSaidas(corredor2, null, salao, null,null);
+
+
+
+
+        // FASE 3
+        //Cria os ambientes
+        salaTrono = new Ambiente("uma grande sala com um trono, em cima dele descansa um dragão branco de olhos azuis");
+
+        //inicializa as saindas dos ambientes da terceira fase
+        corredor2.ajustarSaidas(salaTrono,null, salao, null, null);
+        salaTrono.ajustarSaidas(null, null, null, null, null);
 
         ambienteAtual = fora; // o jogo comeca do lado de fora
     }
@@ -72,8 +136,31 @@ public class Jogo {
      */
     private void imprimirBoasVindas() {
         System.out.println();
-        System.out.println("Bem-vindo ao World of Zuul!");
-        System.out.println("World of Zuul eh um novo jogo de aventura, incrivelmente chato.");
+        System.out.println("Bem-vindo ao Game Of Castle!");
+        System.out.println("Em um mundo repleto de maravilhas e perigos, nossa história se desdobra diante de você, caro" +
+                " aventureiro. Um herói corajoso, munido de um propósito nobre, embarca em uma jornada épica para salvar " +
+                "a destemida Princesa Zelda. No coração deste conto mágico, encontra-se um castelo misterioso e gelado, " +
+                "erguido pelos caprichos da magia antiga, onde repousa o objeto de seu desejo: o Coração de Gelo.\n" +
+                "\n" +
+                "A Princesa Zelda, cativa de um feitiço sombrio, vê sua vida em risco e somente o Coração de Gelo detém " +
+                "o poder de quebrar essa magia nefasta. Você, o herói valente e destemido, é a última esperança deste " +
+                "reino encantado. Com sua espada em punho e a coragem em seu coração, você penetra nas profundezas " +
+                "congeladas do Castelo do Dragão de Gelo.\n" +
+                "\n" +
+                "Neste castelo, um dragão mítico e temido guarda o precioso Coração de Gelo, uma relíquia antiga que " +
+                "detém o poder de congelar o mais ardente dos infernos ou derreter o mais gélido dos corações. Suas " +
+                "escolhas moldarão o destino de Zelda e do reino, e você enfrentará perigos inimagináveis, enigmas " +
+                "mágicos e criaturas misteriosas em sua busca desesperada.\n" +
+                "\n" +
+                "O destino da Princesa Zelda repousa em seus ombros, e o Castelo do Dragão de Gelo é o local onde o " +
+                "destino será selado. Embarque nesta aventura, herói, e prove que o amor e a coragem podem vencer as " +
+                "mais sombrias adversidades. A história aguarda, e o futuro de Zelda e do reino depende de você. É hora " +
+                "de se tornar a lenda que o mundo precisa.");
+
+        //@TODO Implementar a tela que vai mostrar as opções de armas
+        // player.selecionarArma();
+        System.out.println("Como todo lendário Herói, você possui uma arma! \nQual sua arma Herói ?:");
+
         System.out.println("Digite 'ajuda' se voce precisar de ajuda.");
         System.out.println();
 
@@ -91,6 +178,11 @@ public class Jogo {
         }
         if (ambienteAtual.saidaOeste != null) {
             System.out.print("oeste ");
+        }
+        if(ambienteAtual.salas != null){
+            for (Ambiente a: ambienteAtual.salas) {
+                System.out.print(a.nomeDoAmbiente + ", ");
+            }
         }
         System.out.println();
     }
@@ -129,11 +221,11 @@ public class Jogo {
      * palavras de comando
      */
     private void imprimirAjuda() {
-        System.out.println("Voce esta perdido. Voce esta sozinho. Voce caminha");
-        System.out.println("pela universidade.");
+        System.out.println("Voce esta dentro do castelo. Voce esta sozinho. Voce caminha");
+        System.out.println("pelo castelo.");
         System.out.println();
         System.out.println("Suas palavras de comando sao:");
-        System.out.println("   ir sair ajuda");
+        System.out.println("   <ir>  <sair>  <ajuda>   ");
     }
 
     /**
@@ -163,6 +255,10 @@ public class Jogo {
         if (direcao.equals("oeste")) {
             proximoAmbiente = ambienteAtual.saidaOeste;
         }
+        //@TODO implementar verificação de salas possíveis
+        if (direcao.matches("sala[0-8]")){
+            proximoAmbiente = null;
+        }
 
         if (proximoAmbiente == null) {
             System.out.println("Nao ha passagem!");
@@ -183,6 +279,11 @@ public class Jogo {
             }
             if (ambienteAtual.saidaOeste != null) {
                 System.out.print("oeste ");
+            }
+            if(ambienteAtual.salas != null){
+                for (Ambiente a: ambienteAtual.salas) {
+                    System.out.print(a.nomeDoAmbiente + " ");
+                }
             }
             System.out.println();
         }

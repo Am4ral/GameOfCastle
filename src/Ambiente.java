@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 /**
  * Classe Ambiente - um ambiente em um jogo adventure.
  *
@@ -20,6 +22,9 @@ public class Ambiente
     public Ambiente saidaSul;
     public Ambiente saidaLeste;
     public Ambiente saidaOeste;
+    public ArrayList<Ambiente> salas;
+
+    public String nomeDoAmbiente;
 
     /**
      * Cria um ambiente com a "descricao" passada. Inicialmente, ele
@@ -30,9 +35,13 @@ public class Ambiente
      * "um jardim aberto".
      * @param descricao A descricao do ambiente.
      */
-    public Ambiente(String descricao) 
-    {
+
+    public Ambiente(String descricao) {
         this.descricao = descricao;
+    }
+    public Ambiente(String descricao, String nomeDoAmbiente) {
+        this.descricao = descricao;
+        this.nomeDoAmbiente = nomeDoAmbiente;
     }
 
     /**
@@ -42,8 +51,9 @@ public class Ambiente
      * @param leste A saida leste.
      * @param sul A saida sul.
      * @param oeste A saida oeste.
+     * @param salas Caso existam varias salas no ambiente, elas serão enumeradas aqui
      */
-    public void ajustarSaidas(Ambiente norte, Ambiente leste, Ambiente sul, Ambiente oeste) 
+    public void ajustarSaidas(Ambiente norte, Ambiente leste, Ambiente sul, Ambiente oeste, ArrayList<Ambiente> salas)
     {
         if(norte != null)
             saidaNorte = norte;
@@ -53,6 +63,9 @@ public class Ambiente
             saidaSul = sul;
         if(oeste != null)
             saidaOeste = oeste;
+        if(salas != null){
+            this.salas =  salas;
+        }
     }
 
     /**
@@ -63,4 +76,5 @@ public class Ambiente
         return descricao;
     }
 
+    public String getNomeDoAmbiente() {return nomeDoAmbiente; }
 }

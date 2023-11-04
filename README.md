@@ -3,7 +3,9 @@
 ![Forks](https://img.shields.io/github/forks/Am4ral/Append?style=for-the-badge&labelColor=black&color=green)
 ![Issues](https://img.shields.io/github/issues/Am4ral/Append?style=for-the-badge&labelColor=black&color=green)
 
-
+<div style="text-align: center">
+  <img src="img/DALL·E 2023-11-03 21.52.30 - Create a logo for a video game called 'Game of Castle' that is designed in a medieval style. The logo should have a pixel art aesthetic, reminiscent o.png" style =" height:500px; width:500px">
+</div>
 
 
 

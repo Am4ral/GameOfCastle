@@ -1,3 +1,10 @@
+import ambientes.Ambiente;
+import ambientes.SalaItemPorta;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Essa eh a classe principal da aplicacao "World of Zull".
  * "World of Zuul" eh um jogo de aventura muito simples, baseado em texto.
@@ -16,6 +23,7 @@
  */
 
 public class Jogo {
+    private final List<String> itensFase1 = new ArrayList<>();
     private Analisador analisador;
     private Ambiente salaAtual;
 
@@ -23,6 +31,10 @@ public class Jogo {
      * Cria o jogo e incializa seu mapa interno.
      */
     public Jogo() {
+        itensFase1.add("Aljava com flechas");
+        itensFase1.add("Saquinho com pedras");
+        itensFase1.add("Cartucho de munições");
+        itensFase1.add("Pedra de amolar");
         criarAmbiente();
         analisador = new Analisador();
     }
@@ -31,30 +43,36 @@ public class Jogo {
      * Cria todos os ambientes e liga as saidas deles
      */
     private void criarAmbiente() {
-        Ambiente outside, theater, pub, lab, office;
+        //Ambientes Fase 1
+        Ambiente salaEntrada;
+        SalaItemPorta sala1, sala2, sala3, sala4;
 
         // cria os ambientes
-        outside = new Ambiente("outside the main entrance of the university");
-        theater = new Ambiente("in a lecture theater");
-        pub = new Ambiente("in the campus pub");
-        lab = new Ambiente("in a computing lab");
-        office = new Ambiente("in the computing admin office");
+        salaEntrada = new Ambiente("Você está no salão de entada do Castelo! \nVocê consegue enxergar à sua frente um grande portão, na sua esquerda estão duas portas que aparentam levar para salas. À sua direita existem mais duas portas que também parecem levar a salas. \nVocê se aproxima do portão e tentar abrir ele, porem ele não se move e também não tem nenhuma fechadura para colocar as chaves que o mago te deu.");
+        Collections.shuffle(itensFase1);
+        sala1 = new SalaItemPorta("em uma sala com um ", itensFase1.get(0));
+        sala2 = new SalaItemPorta("em uma sala com um ", itensFase1.get(1));
+        sala3 = new SalaItemPorta("em uma sala com um ", itensFase1.get(2));
+        sala4 = new SalaItemPorta("em uma sala com um ", itensFase1.get(3));
 
         // inicializa as saidas dos ambientes
-        outside.ajustarSaida("east", theater);
-        outside.ajustarSaida("south", lab);
-        outside.ajustarSaida("west", pub);
+        salaEntrada.ajustarSaida("Sala1", sala1);
+        salaEntrada.ajustarSaida("Sala2", sala2);
+        salaEntrada.ajustarSaida("Sala3", sala3);
+        salaEntrada.ajustarSaida("Sala4", sala4);
 
-        theater.ajustarSaida("west", outside);
+        sala1.ajustarSaida("Sul", salaEntrada);
+        sala2.ajustarSaida("Sul", salaEntrada);
+        sala3.ajustarSaida("Sul", salaEntrada);
+        sala4.ajustarSaida("Sul", salaEntrada);
 
-        pub.ajustarSaida("east", outside);
+        //Ambientes Fase 2
 
-        lab.ajustarSaida("north", outside);
-        lab.ajustarSaida("east", office);
+        //Ambientes Fase 3
 
-        office.ajustarSaida("west", lab);
 
-        salaAtual = outside; // ambiente em que é iniciado o jogo
+
+        salaAtual = salaEntrada; // ambiente em que é iniciado o jogo
     }
 
     /**

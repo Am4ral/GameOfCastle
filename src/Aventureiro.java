@@ -15,7 +15,6 @@
 public class Aventureiro {
 
     private int pontosDeVida;
-    private String nome;
     private String arma;
     private Inventario inventario;
 
@@ -26,9 +25,8 @@ public class Aventureiro {
      * @param nome O nome do aventureiro.
      * @param arma A arma do aventureiro.
      */
-    public Aventureiro(String nome, String arma) {
+    public Aventureiro(String arma) {
         pontosDeVida = 100;
-        this.nome = nome;
         this.arma = arma;
         inventario = new Inventario();
         receberChaves();
@@ -40,14 +38,6 @@ public class Aventureiro {
      */
     public int getPontosDeVida() {
         return pontosDeVida;
-    }
-
-    /**
-     * 
-     * @return O nome do aventureiro.
-     */
-    public String getNome() {
-        return nome;
     }
 
     /**
@@ -76,7 +66,7 @@ public class Aventureiro {
     /**
      * Cria o item e adiciona ao inventário do jogador.
      * 
-     * @param nome O nome do item.
+     * @param nome      O nome do item.
      * @param descricao A descrição do item.
      */
     public void adicionarItem(String nome, String descricao) {

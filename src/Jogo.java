@@ -30,33 +30,15 @@ public class Jogo {
     public Jogo() {
         analisador = new Analisador();
 
-        criarPrimeiraFase();
+        criarAmbiente();
     }
 
     /**
      * Cria todos os ambientes e liga as saidas deles
      */
-    private void criarPrimeiraFase() {
-        Ambiente outside, theater, pub, lab, office;
-
-        // cria os ambientes
-        outside = new Ambiente("outside the main entrance of the university");
-        theater = new Ambiente("in a lecture theater");
-        pub = new Ambiente("in the campus pub");
-        lab = new Ambiente("in a computing lab");
-        office = new Ambiente("in the computing admin office");
-
-        // inicializa as saidas dos ambientes
-        outside.ajustarSaida("east", theater);
-        outside.ajustarSaida("south", lab);
-        outside.ajustarSaida("west", pub);
-
-        theater.ajustarSaida("west", outside);
-
-        pub.ajustarSaida("east", outside);
-
-        lab.ajustarSaida("north", outside);
-        lab.ajustarSaida("east", office);
+    private void criarAmbiente() {
+    
+    }
 
     public void personalizarAventureiro() {
         aventureiro = new Aventureiro(escolheArma());

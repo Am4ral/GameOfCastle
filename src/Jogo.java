@@ -1,3 +1,10 @@
+import ambientes.Ambiente;
+import ambientes.SalaItemPorta;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import java.util.Scanner;
 
 /**
@@ -18,9 +25,12 @@ import java.util.Scanner;
  */
 
 public class Jogo {
-
+    
     private Analisador analisador;
+
     private Ambiente salaAtual;
+    private final List<String> itensFase1 = new ArrayList<>();
+    
     private Aventureiro aventureiro;
     private Scanner entrada;
 
@@ -28,34 +38,48 @@ public class Jogo {
      * Cria o jogo e incializa seu mapa interno.
      */
     public Jogo() {
-        analisador = new Analisador();
+        
         entrada = new Scanner(System.in);
-
-        criaPrimeiraFase();
+        analisador = new Analisador();
+        
+        itensFase1.add("Aljava com flechas");
+        itensFase1.add("Saquinho com pedras");
+        itensFase1.add("Cartucho de munições");
+        itensFase1.add("Pedra de amolar");
+        
+        criarAmbiente();
     }
 
     /**
      * Cria todos os ambientes e liga as saidas deles
      */
-    private void criaPrimeiraFase() {
+    private void criarAmbiente() {
+        //Ambientes Fase 1
+        Ambiente salaEntrada;
+        SalaItemPorta sala1, sala2, sala3, sala4;
 
-        Ambiente salaEntrada, sala1, sala2, sala3, sala4;
+        // cria os ambientes
+        salaEntrada = new Ambiente("Você está no salão de entada do Castelo! \nVocê consegue enxergar à sua frente um grande portão, na sua esquerda estão duas portas que aparentam levar para salas. À sua direita existem mais duas portas que também parecem levar a salas. \nVocê se aproxima do portão e tentar abrir ele, porem ele não se move e também não tem nenhuma fechadura para colocar as chaves que o mago te deu.");
+        Collections.shuffle(itensFase1);
+        sala1 = new SalaItemPorta("em uma sala com um ", itensFase1.get(0));
+        sala2 = new SalaItemPorta("em uma sala com um ", itensFase1.get(1));
+        sala3 = new SalaItemPorta("em uma sala com um ", itensFase1.get(2));
+        sala4 = new SalaItemPorta("em uma sala com um ", itensFase1.get(3));
 
-        salaEntrada = new Ambiente("sala de entrada do castelo");
-        sala1 = new Ambiente("sala simples");
-        sala2 = new Ambiente("sala simples");
-        sala3 = new Ambiente("sala simples");
-        sala4 = new Ambiente("sala simples");
+        // inicializa as saidas dos ambientes
+        salaEntrada.ajustarSaida("Sala1", sala1);
+        salaEntrada.ajustarSaida("Sala2", sala2);
+        salaEntrada.ajustarSaida("Sala3", sala3);
+        salaEntrada.ajustarSaida("Sala4", sala4);
 
-        salaEntrada.ajustarSaida("sala1", sala1);
-        salaEntrada.ajustarSaida("sala2", sala2);
-        salaEntrada.ajustarSaida("sala3", sala3);
-        salaEntrada.ajustarSaida("sala4", sala4);
+        sala1.ajustarSaida("Sul", salaEntrada);
+        sala2.ajustarSaida("Sul", salaEntrada);
+        sala3.ajustarSaida("Sul", salaEntrada);
+        sala4.ajustarSaida("Sul", salaEntrada);
 
-        sala1.ajustarSaida("salaEntrada", salaEntrada);
-        sala2.ajustarSaida("salaEntrada", salaEntrada);
-        sala3.ajustarSaida("salaEntrada", salaEntrada);
-        sala4.ajustarSaida("salaEntrada", salaEntrada);
+        //Ambientes Fase 2
+
+        //Ambientes Fase 3
 
         salaAtual = salaEntrada; // ambiente em que é iniciado o jogo
     }
@@ -97,11 +121,11 @@ public class Jogo {
      * Rotina principal do jogo. Fica em loop ate terminar o jogo.
      */
     public void jogar() {
-
+        
         imprimirBoasVindas();
         personalizarAventureiro();
         imprimirContextoInicial();
-        
+
         // Entra no loop de comando principal. Aqui nos repetidamente lemos
         // comandos e os executamos ate o jogo terminar.
 
@@ -144,12 +168,12 @@ public class Jogo {
             return false;
         }
 
-        String palavraComando = comando.getPalavraDeComando();
-        if (palavraComando.equals("ajuda")) {
+        String commandWord = comando.getPalavraDeComando();
+        if (commandWord.equals("ajuda")) {
             imprimirAjuda();
-        } else if (palavraComando.equals("ir")) {
+        } else if (commandWord.equals("ir")) {
             irParaAmbiente(comando);
-        } else if (palavraComando.equals("sair")) {
+        } else if (commandWord.equals("sair")) {
             querSair = sair(comando);
         }
 
@@ -160,18 +184,12 @@ public class Jogo {
 
     /**
      * Printe informacoes de ajuda.
-     * Aqui nos imprimimos algo bobo e enigmatico e a lista de
-     * palavras de comando
      */
     private void imprimirAjuda() {
         System.out.println("Seus comandos são:");
         analisador.mostrarComandos();
     }
 
-    /**
-     * Tenta ir em uma direcao. Se existe uma saida entra no
-     * novo ambiente, caso contrario imprime mensagem de erro.
-     */
     private void irParaAmbiente(Comando comando) {
         if (!comando.temSegundaPalavra()) {
             // se nao ha segunda palavra, nao sabemos pra onde ir...

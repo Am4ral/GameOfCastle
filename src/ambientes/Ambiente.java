@@ -68,7 +68,7 @@ public class Ambiente {
      * @return Detalhes das saídas do ambiente.
      */
     protected String direcoesDeSaida() {
-        String textoSaidas = "";
+        String textoSaidas = "Locais: ";
         for (String direcao : saidas.keySet()) {
             textoSaidas = textoSaidas + direcao + " ";
         }

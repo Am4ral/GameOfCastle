@@ -25,12 +25,12 @@ import java.util.Scanner;
  */
 
 public class Jogo {
-    
+
     private Analisador analisador;
 
     private Ambiente salaAtual;
     private final List<String> itensFase1 = new ArrayList<>();
-    
+
     private Aventureiro aventureiro;
     private Scanner entrada;
 
@@ -38,15 +38,15 @@ public class Jogo {
      * Cria o jogo e incializa seu mapa interno.
      */
     public Jogo() {
-        
+
         entrada = new Scanner(System.in);
         analisador = new Analisador();
-        
-        itensFase1.add("Aljava com flechas");
-        itensFase1.add("Saquinho com pedras");
-        itensFase1.add("Cartucho de munições");
-        itensFase1.add("Pedra de amolar");
-        
+
+        itensFase1.add("uma aljava com flechas");
+        itensFase1.add("um saquinho com pedras");
+        itensFase1.add("um cartucho de munições");
+        itensFase1.add("uma pedra de amolar");
+
         criarAmbiente();
     }
 
@@ -54,17 +54,17 @@ public class Jogo {
      * Cria todos os ambientes e liga as saidas deles
      */
     private void criarAmbiente() {
-        //Ambientes Fase 1
+        // Ambientes Fase 1
         Ambiente salaEntrada;
         SalaItemPorta sala1, sala2, sala3, sala4;
 
         // cria os ambientes
-        salaEntrada = new Ambiente("Você está no salão de entada do Castelo! \nVocê consegue enxergar à sua frente um grande portão, na sua esquerda estão duas portas que aparentam levar para salas. À sua direita existem mais duas portas que também parecem levar a salas. \nVocê se aproxima do portão e tentar abrir ele, porem ele não se move e também não tem nenhuma fechadura para colocar as chaves que o mago te deu.");
+        salaEntrada = new Ambiente("no salão de entrada do castelo.");
         Collections.shuffle(itensFase1);
-        sala1 = new SalaItemPorta("em uma sala com um ", itensFase1.get(0));
-        sala2 = new SalaItemPorta("em uma sala com um ", itensFase1.get(1));
-        sala3 = new SalaItemPorta("em uma sala com um ", itensFase1.get(2));
-        sala4 = new SalaItemPorta("em uma sala com um ", itensFase1.get(3));
+        sala1 = new SalaItemPorta("uma sala simples", itensFase1.get(0));
+        sala2 = new SalaItemPorta("uma sala simples", itensFase1.get(1));
+        sala3 = new SalaItemPorta("uma sala simples", itensFase1.get(2));
+        sala4 = new SalaItemPorta("uma sala simples", itensFase1.get(3));
 
         // inicializa as saidas dos ambientes
         salaEntrada.ajustarSaida("Sala1", sala1);
@@ -72,24 +72,21 @@ public class Jogo {
         salaEntrada.ajustarSaida("Sala3", sala3);
         salaEntrada.ajustarSaida("Sala4", sala4);
 
-        sala1.ajustarSaida("Sul", salaEntrada);
-        sala2.ajustarSaida("Sul", salaEntrada);
-        sala3.ajustarSaida("Sul", salaEntrada);
-        sala4.ajustarSaida("Sul", salaEntrada);
+        sala1.ajustarSaida("SalaEntrada", salaEntrada);
+        sala2.ajustarSaida("SalaEntrada", salaEntrada);
+        sala3.ajustarSaida("SalaEntrada", salaEntrada);
+        sala4.ajustarSaida("SalaEntrada", salaEntrada);
 
-        //Ambientes Fase 2
+        // Ambientes Fase 2
 
-        //Ambientes Fase 3
+        // Ambientes Fase 3
 
         salaAtual = salaEntrada; // ambiente em que é iniciado o jogo
     }
 
     private void personalizarAventureiro() {
-        System.out.print("Digite o nome do seu aventureiro: ");
-        String nome = entrada.nextLine();
         String arma = escolheArmas();
-
-        aventureiro = new Aventureiro(nome, arma);
+        aventureiro = new Aventureiro(arma);
     }
 
     private String escolheArmas() {
@@ -121,7 +118,7 @@ public class Jogo {
      * Rotina principal do jogo. Fica em loop ate terminar o jogo.
      */
     public void jogar() {
-        
+
         imprimirBoasVindas();
         personalizarAventureiro();
         imprimirContextoInicial();
@@ -148,10 +145,16 @@ public class Jogo {
 
     private void imprimirContextoInicial() {
         System.out.println("\nVocê é um aventureiro e está prestes a entrar em um grande castelo.");
-        System.out.println("Na entrada, você se encontra com um ancião e recebe duas chaves. Além disso," +
+        System.out.println("Na entrada, você se encontra com um ancião e recebe duas chaves. Além disso, " +
                 "ele te passa uma dica sobre a sala que possui um item para completar sua arma:");
         System.out.println(/* dica da sala */);
+        System.out.println(salaAtual.getDescricao());
+        System.out.println("\nA sua frente há um enorme portão. A sua esquerda há duas portas e a direita também.\n" +
+                "Curioso, você se aproxima do portão maior. Não há fechadura. Você tenta abrí-lo, porém, o portão não se move.\n"
+                +
+                "Sem sucesso, você retorna.\n");
         System.out.println(salaAtual.getDescricaoLonga());
+
     }
 
     /**
@@ -206,16 +209,21 @@ public class Jogo {
             System.out.println("Não há esse local!");
         } else {
             salaAtual = proximaSala;
-            
-            /*if (salaAtual instanceof SalaItemPorta){
-                String municao = salaAtual.getMunicao();
-                System.out.println("Você encontrou " + municao + "!");
+
+            if (salaAtual instanceof SalaItemPorta) {
                 
-                aventureiro.adicionarItem(municao, "Objeto que completa uma arma específica.");
-                System.out.println("O item foi adicionado ao inventário.");
-            }*/
-            
+                String municao = ((SalaItemPorta) salaAtual).getItem();
+                
+                System.out.println("Você está em " + salaAtual.getDescricao() + ".");
+                System.out.println("Nela, você encontra " + municao + " e guarda.");
+
+                aventureiro.adicionarItem(municao,
+                        "Objeto que completa uma arma específica.");
+                System.out.println("O item foi adicionado ao inventário!");
+            }
+
             System.out.println(salaAtual.getDescricaoLonga());
+        
         }
     }
 

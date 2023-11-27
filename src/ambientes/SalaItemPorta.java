@@ -1,7 +1,5 @@
 package ambientes;
 
-import java.util.ArrayList;
-
 public class SalaItemPorta extends Ambiente{
     private String item;
     private boolean trancado;
@@ -36,7 +34,7 @@ public class SalaItemPorta extends Ambiente{
 
     @Override
     public String getDescricaoLonga(){
-        return "Você está em uma sala vazia, num canto tem " + item + ".\n" + direcoesDeSaida();
+        return direcoesDeSaida();
     }
 }
 

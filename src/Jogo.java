@@ -18,61 +18,90 @@ import java.util.Scanner;
  */
 
 public class Jogo {
+
     private Analisador analisador;
     private Ambiente salaAtual;
     private Aventureiro aventureiro;
-    private String[] armas = { "Espada", "Estilingue", "Revólver", "Arco" };
-    private String mensagemUsuario;
+    private Scanner entrada;
 
     /**
      * Cria o jogo e incializa seu mapa interno.
      */
     public Jogo() {
         analisador = new Analisador();
+        entrada = new Scanner(System.in);
 
-        criarAmbiente();
+        criaPrimeiraFase();
     }
 
     /**
      * Cria todos os ambientes e liga as saidas deles
      */
-    private void criarAmbiente() {
-    
+    private void criaPrimeiraFase() {
+
+        Ambiente salaEntrada, sala1, sala2, sala3, sala4;
+
+        salaEntrada = new Ambiente("sala de entrada do castelo");
+        sala1 = new Ambiente("sala simples");
+        sala2 = new Ambiente("sala simples");
+        sala3 = new Ambiente("sala simples");
+        sala4 = new Ambiente("sala simples");
+
+        salaEntrada.ajustarSaida("sala1", sala1);
+        salaEntrada.ajustarSaida("sala2", sala2);
+        salaEntrada.ajustarSaida("sala3", sala3);
+        salaEntrada.ajustarSaida("sala4", sala4);
+
+        sala1.ajustarSaida("salaEntrada", salaEntrada);
+        sala2.ajustarSaida("salaEntrada", salaEntrada);
+        sala3.ajustarSaida("salaEntrada", salaEntrada);
+        sala4.ajustarSaida("salaEntrada", salaEntrada);
+
+        salaAtual = salaEntrada; // ambiente em que é iniciado o jogo
     }
 
-    public void personalizarAventureiro() {
-        aventureiro = new Aventureiro(escolheArma());
+    private void personalizarAventureiro() {
+        System.out.print("Digite o nome do seu aventureiro: ");
+        String nome = entrada.nextLine();
+        String arma = escolheArmas();
+
+        aventureiro = new Aventureiro(nome, arma);
     }
 
-    public String exibirMensagemArma() {
-        String mensagemArmas = "";
+    private String escolheArmas() {
+
+        String[] armas = { "Espada", "Estilingue", "Revólver", "Arco" };
 
         for (int i = 0; i < armas.length; i++) {
-            mensagemArmas += (i + 1) + " - " + armas[i] + "\n";
+            System.out.println((i + 1) + " - " + armas[i]);
         }
 
-        mensagemArmas += "Escolha o número da sua arma:";
+        System.out.print("Escolha o número da sua arma: ");
 
-        return mensagemArmas;
-    }
-
-    private String escolheArma() {
-        int posicao = Integer.parseInt(mensagemUsuario);
+        int posicao = entrada.nextInt();
         posicao -= 1;
 
-        if (posicao < 0 || posicao > armas.length - 1) {
-            throw new IndexOutOfBoundsException(
-                    "Essa arma não existe. Por favor, digite um número válido.\nEscolha o número da sua arma:");
+        while (true) {
+            if (posicao < 0 || posicao > armas.length) {
+                System.out.println("Essa arma não existe. Por favor, digite um número válido.");
+                System.out.print("Escolha o número da sua arma: ");
+                posicao = entrada.nextInt();
+            } else {
+                return armas[posicao];
+            }
         }
-        return armas[posicao];
+
     }
 
     /**
      * Rotina principal do jogo. Fica em loop ate terminar o jogo.
      */
     public void jogar() {
-        imprimirBoasVindas();
 
+        imprimirBoasVindas();
+        personalizarAventureiro();
+        imprimirContextoInicial();
+        
         // Entra no loop de comando principal. Aqui nos repetidamente lemos
         // comandos e os executamos ate o jogo terminar.
 
@@ -87,11 +116,13 @@ public class Jogo {
     /**
      * Imprime a mensagem de abertura para o jogador.
      */
-    public String imprimirBoasVindas() {
-        return "Bem vindo ao Game of Castle!\nGame of Castle é um jogo aventura incrível.\nDigite 'help' se precisar de ajuda.";
+    private void imprimirBoasVindas() {
+        System.out.println("\nBem vindo ao Game of Castle!");
+        System.out.println("Game of Castle é um jogo aventura incrível.");
+        System.out.println("Digite 'help' se precisar de ajuda.\n");
     }
 
-    public void imprimirContextoInicial() {
+    private void imprimirContextoInicial() {
         System.out.println("\nVocê é um aventureiro e está prestes a entrar em um grande castelo.");
         System.out.println("Na entrada, você se encontra com um ancião e recebe duas chaves. Além disso," +
                 "ele te passa uma dica sobre a sala que possui um item para completar sua arma:");
@@ -109,16 +140,16 @@ public class Jogo {
         boolean querSair = false;
 
         if (comando.ehDesconhecido()) {
-            System.out.println("I don't know what you mean...");
+            System.out.println("Não sei o que você quer dizer...");
             return false;
         }
 
-        String commandWord = comando.getPalavraDeComando();
-        if (commandWord.equals("ajuda")) {
+        String palavraComando = comando.getPalavraDeComando();
+        if (palavraComando.equals("ajuda")) {
             imprimirAjuda();
-        } else if (commandWord.equals("ir")) {
+        } else if (palavraComando.equals("ir")) {
             irParaAmbiente(comando);
-        } else if (commandWord.equals("sair")) {
+        } else if (palavraComando.equals("sair")) {
             querSair = sair(comando);
         }
 
@@ -133,10 +164,7 @@ public class Jogo {
      * palavras de comando
      */
     private void imprimirAjuda() {
-        System.out.println("You are lost. You are alone. You wander");
-        System.out.println("around at the university.");
-        System.out.println();
-        System.out.println("Your comando words are:");
+        System.out.println("Seus comandos são:");
         analisador.mostrarComandos();
     }
 
@@ -147,46 +175,30 @@ public class Jogo {
     private void irParaAmbiente(Comando comando) {
         if (!comando.temSegundaPalavra()) {
             // se nao ha segunda palavra, nao sabemos pra onde ir...
-            System.out.println("Go where?");
+            System.out.println("Ir para onde?");
             return;
         }
 
-        String direction = comando.getSegundaPalavra();
+        String direcao = comando.getSegundaPalavra();
 
         // Tenta sair do ambiente atual
-        Ambiente proximaSala = salaAtual.getSaida(direction);
+        Ambiente proximaSala = salaAtual.getSaida(direcao);
 
         if (proximaSala == null) {
-            System.out.println("There is no door!");
+            System.out.println("Não há esse local!");
         } else {
             salaAtual = proximaSala;
-
-            /*
-             * if (salaAtual instanceof SalaItemPorta){
-             * String municao = salaAtual.getMunicao();
-             * System.out.println("Você encontrou " + municao + "!");
-             * 
-             * aventureiro.adicionarItem(municao,
-             * "Objeto que completa uma arma específica.");
-             * System.out.println("O item foi adicionado ao inventário.");
-             * }
-             */
-
+            
+            /*if (salaAtual instanceof SalaItemPorta){
+                String municao = salaAtual.getMunicao();
+                System.out.println("Você encontrou " + municao + "!");
+                
+                aventureiro.adicionarItem(municao, "Objeto que completa uma arma específica.");
+                System.out.println("O item foi adicionado ao inventário.");
+            }*/
+            
             System.out.println(salaAtual.getDescricaoLonga());
         }
-    }
-
-    public int getVidaAventureiro() {
-        return aventureiro.getPontosDeVida();
-    }
-
-    public String getArmaAventureiro() {
-        return aventureiro.getArma();
-    }
-
-    public void getRespostaInterface(String mensagem) {
-        mensagemUsuario = mensagem;
-        personalizarAventureiro();
     }
 
     /**
@@ -197,7 +209,7 @@ public class Jogo {
      */
     private boolean sair(Comando comando) {
         if (comando.temSegundaPalavra()) {
-            System.out.println("Quit what?");
+            System.out.println("Sair?");
             return false;
         } else {
             return true; // sinaliza que nos queremos sair

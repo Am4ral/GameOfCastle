@@ -15,6 +15,7 @@
 public class Aventureiro {
 
     private int pontosDeVida;
+    private String nome;
     private String arma;
     private Inventario inventario;
 
@@ -25,8 +26,9 @@ public class Aventureiro {
      * @param nome O nome do aventureiro.
      * @param arma A arma do aventureiro.
      */
-    public Aventureiro(String arma) {
+    public Aventureiro(String nome, String arma) {
         pontosDeVida = 100;
+        this.nome = nome;
         this.arma = arma;
         inventario = new Inventario();
         receberChaves();

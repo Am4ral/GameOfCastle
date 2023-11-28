@@ -75,6 +75,16 @@ public class Ambiente {
         return textoSaidas;
     }
 
+    public HashMap<String, Ambiente> getSaidas(){
+        
+        HashMap<String, Ambiente> ambientes = new HashMap<>();
+        
+        for(String direcao : saidas.keySet()){
+            ambientes.put(direcao, saidas.get(direcao));
+        }
+        return ambientes;
+    }
+
     /**
      * Retorna o ambiente que é alcançado se formos de um ambiente na
      * direção "direcao". Se há um ambiente sem direção, é retornado nulo.

@@ -3,6 +3,7 @@ import ambientes.SalaItemPorta;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import java.util.Scanner;
@@ -29,7 +30,7 @@ public class Jogo {
     private Analisador analisador;
 
     private Ambiente salaAtual;
-    private final List<String> itensFase1 = new ArrayList<>();
+    private final HashMap<String, String> armasItens;
 
     private Aventureiro aventureiro;
     private Scanner entrada;
@@ -41,11 +42,12 @@ public class Jogo {
 
         entrada = new Scanner(System.in);
         analisador = new Analisador();
+        armasItens = new HashMap<>();
 
-        itensFase1.add("uma aljava com flechas");
-        itensFase1.add("um saquinho com pedras");
-        itensFase1.add("um cartucho de munições");
-        itensFase1.add("uma pedra de amolar");
+        armasItens.put("Espada", "uma pedra de amolar");
+        armasItens.put("Estilingue", "um saquinho com pedras");
+        armasItens.put("Revólver", "um cartucho de munições");
+        armasItens.put("Arco", "uma aljava com flechas");
 
         criarAmbiente();
     }
@@ -60,7 +62,9 @@ public class Jogo {
 
         // cria os ambientes
         salaEntrada = new Ambiente("no salão de entrada do castelo.");
-        Collections.shuffle(itensFase1);
+
+        List<String> itensFase1 = aleatorizarItens();
+
         sala1 = new SalaItemPorta("uma sala simples", itensFase1.get(0));
         sala2 = new SalaItemPorta("uma sala simples", itensFase1.get(1));
         sala3 = new SalaItemPorta("uma sala simples", itensFase1.get(2));
@@ -78,44 +82,75 @@ public class Jogo {
         sala4.ajustarSaida("SalaEntrada", salaEntrada);
 
         // Ambientes Fase 2
-
         // Ambientes Fase 3
 
         salaAtual = salaEntrada; // ambiente em que é iniciado o jogo
     }
 
+    /**
+     * Aleatoriza a localização dos itens nas salas da primeira fase.
+     * 
+     * @return Lista aleatorizada de itens.
+     */
+    private List<String> aleatorizarItens() {
+
+        List<String> itens = new ArrayList<>();
+
+        for (String arma : armasItens.keySet()) {
+            itens.add(armasItens.get(arma));
+        }
+
+        Collections.shuffle(itens);
+
+        return itens;
+    }
+
+    /**
+     * Personaliza o aventureiro, instanciando e atribuindo uma arma.
+     */
     private void personalizarAventureiro() {
         String arma = escolheArmas();
         aventureiro = new Aventureiro(arma);
     }
 
+    /**
+     * Imprime as opções de escolha de armas e solicita que o jogador escolha dentro
+     * do limite das opções.
+     * 
+     * @return Arma que será atribuída ao aventureiro.
+     */
     private String escolheArmas() {
 
-        String[] armas = { "Espada", "Estilingue", "Revólver", "Arco" };
-
-        for (int i = 0; i < armas.length; i++) {
-            System.out.println((i + 1) + " - " + armas[i]);
+        int opcao = 1;
+        for (String arma : armasItens.keySet()) {
+            System.out.println((opcao) + " - " + arma);
+            opcao++;
         }
 
-        System.out.print("Escolha o número da sua arma: ");
+        System.out.print("\nEscolha o número da sua arma: ");
 
         int posicao = entrada.nextInt();
-        posicao -= 1;
 
         while (true) {
-            if (posicao < 0 || posicao > armas.length) {
+            if (posicao < 1 || posicao > armasItens.size()) {
                 System.out.println("Essa arma não existe. Por favor, digite um número válido.");
-                System.out.print("Escolha o número da sua arma: ");
+                System.out.print("\nEscolha o número da sua arma: ");
                 posicao = entrada.nextInt();
             } else {
-                return armas[posicao];
+                opcao = 1;
+                for (String arma : armasItens.keySet()) {
+                    if (posicao == opcao) {
+                        return arma;
+                    }
+                    opcao++;
+                }
             }
         }
 
     }
 
     /**
-     * Rotina principal do jogo. Fica em loop ate terminar o jogo.
+     * Rotina principal do jogo.
      */
     public void jogar() {
 
@@ -124,14 +159,27 @@ public class Jogo {
         imprimirContextoInicial();
 
         // Entra no loop de comando principal. Aqui nos repetidamente lemos
-        // comandos e os executamos ate o jogo terminar.
-
-        boolean terminado = false;
-        while (!terminado) {
+        // comandos e os executamos ate a primeira fase terminar.
+        int salasAbertas = 0;
+        while (!estaPreparado() && salasAbertas < 2) {
             Comando comando = analisador.getComando();
-            terminado = processarComando(comando);
+            if (processarComando(comando)) {
+                salasAbertas++;
+            }
         }
-        System.out.println("Obrigado por jogar. Ate mais!");
+
+        if (!avancaDeFase()) {
+            imprimirDerrota();
+        } else {
+            System.out.println("\nVocê luta bravamente.");
+            System.out.println("Uma batalha intensa finaliza e você sai vitorioso!\n");
+        }
+
+        // O aventureiro possui o item necessário para melhorar sua arma?
+
+        System.out.println("Obrigado por jogar!");
+        System.out.println(
+                "Esse jogo foi desenvolvido por: João Pedro Ramalho, Marco Túlio Amaral, Matheus Bertoldo e Renan Ribeiro");
     }
 
     /**
@@ -143,18 +191,95 @@ public class Jogo {
         System.out.println("Digite 'help' se precisar de ajuda.\n");
     }
 
+    /**
+     * Imprime o contexto do jogo, incluindo a dica da localização do item
+     * necessário para passar de fase.
+     */
     private void imprimirContextoInicial() {
         System.out.println("\nVocê é um aventureiro e está prestes a entrar em um grande castelo.");
         System.out.println("Na entrada, você se encontra com um ancião e recebe duas chaves. Além disso, " +
-                "ele te passa uma dica sobre a sala que possui um item para completar sua arma:");
-        System.out.println(/* dica da sala */);
+                "ele te passa uma dica sobre a sala que possui um item para completar sua arma.");
+        System.out.println(
+                "\"Os deuses te escolheram aventureiro! Aquilo que você procura não está na " + imprimirDica() + ".\"");
         System.out.println(salaAtual.getDescricao());
-        System.out.println("\nA sua frente há um enorme portão. A sua esquerda há duas portas e a direita também.\n" +
+        System.out.println("\nÀ sua frente há um enorme portão. A sua esquerda há duas portas e a direita também.\n" +
                 "Curioso, você se aproxima do portão maior. Não há fechadura. Você tenta abrí-lo, porém, o portão não se move.\n"
                 +
                 "Sem sucesso, você retorna.\n");
         System.out.println(salaAtual.getDescricaoLonga());
 
+    }
+
+    /**
+     * Imprime uma dica. A dica consiste em qual sala o item necessário não está.
+     * 
+     * @return Sala em que o item não está.
+     */
+    private String imprimirDica() {
+
+        String itemNecessario = armasItens.get(aventureiro.getArma());
+        HashMap<String, Ambiente> salas = salaAtual.getSaidas();
+
+        String chave = null;
+        for (String a : salas.keySet()) {
+            if (((SalaItemPorta) salas.get(a)).getItem().equals(itemNecessario)) {
+                chave = a;
+            }
+        }
+        salas.remove(chave);
+
+        List<String> chaves = new ArrayList<>(salas.keySet());
+        Collections.shuffle(chaves);
+
+        return chaves.get(0);
+    }
+
+    /**
+     * Imprime o contexto do evento e verifica se o aventureiro possui o item
+     * necessário para passar de fase, mudando a narrativa do jogo.
+     * 
+     * @return true se o aventureiro pode passar de fase, caso contrário false.
+     */
+    private boolean avancaDeFase() {
+        boolean passou = false;
+
+        System.out.println("\nBatidas violentas em madeira começam a ecoar de fora da sala.");
+        System.out.println("Assustado, você retorna a sala de entrada para averiguar o barulho.");
+        System.out.println("Algo está esmurrando a porta de forma violenta as portas que bloqueam o caminho!");
+
+        if (estaPreparado()) {
+            System.out.println("\nCiente de que algo se aproxima, você se prepara para o pior.\n");
+
+            aventureiro.removerItem(armasItens.get(aventureiro.getArma()));
+            System.out.println(armasItens.get(aventureiro.getArma()) + " foi removido do inventário.\n");
+            passou = true;
+        }
+
+        System.out.println("A porta que antes parecia impossível de quebrar é destruída!");
+        System.out.println("Pedaços de madeira voam para os lados.");
+        System.out.println("Ao fundo, surge um Orc furioso que avança em sua direção.");
+
+        return passou;
+    }
+
+    /**
+     * Verifica se o aventureiro possui o item necessário correspondente a sua arma
+     * no inventário.
+     * 
+     * @return true se possui o item, caso contrário false.
+     */
+    private boolean estaPreparado() {
+        return aventureiro.existeItem(armasItens.get(aventureiro.getArma()));
+    }
+
+    /**
+     * Imprime a mensagem de derrota.
+     */
+    private void imprimirDerrota() {
+        System.out.println("\nSeus olhos fecham...");
+        System.out.println("Sua vida se esvai.");
+        System.out.println("A escuridão te consome.\n");
+        System.out.println("Você está morto.\n");
     }
 
     /**
@@ -164,7 +289,7 @@ public class Jogo {
      * @return true se o comando finaliza o jogo, caso contrário false.
      */
     private boolean processarComando(Comando comando) {
-        boolean querSair = false;
+        boolean terminar = false;
 
         if (comando.ehDesconhecido()) {
             System.out.println("Não sei o que você quer dizer...");
@@ -175,70 +300,87 @@ public class Jogo {
         if (commandWord.equals("ajuda")) {
             imprimirAjuda();
         } else if (commandWord.equals("ir")) {
-            irParaAmbiente(comando);
-        } else if (commandWord.equals("sair")) {
-            querSair = sair(comando);
+            terminar = irParaAmbiente(comando);
         }
 
-        return querSair;
+        return terminar;
     }
 
     // Implementacoes dos comandos do usuario
 
     /**
-     * Printe informacoes de ajuda.
+     * Imprime informações de ajuda.
      */
     private void imprimirAjuda() {
         System.out.println("Seus comandos são:");
         analisador.mostrarComandos();
     }
 
-    private void irParaAmbiente(Comando comando) {
+    /**
+     * Verifica se o comando possui destino e se ele existe. Determina as interações
+     * com tipos de salas específicas.
+     * 
+     * @param comando O Comando a ser processado.
+     * @return true se o comando finaliza o jogo, caso contrário false.
+     */
+    private boolean irParaAmbiente(Comando comando) {
+
         if (!comando.temSegundaPalavra()) {
             // se nao ha segunda palavra, nao sabemos pra onde ir...
             System.out.println("Ir para onde?");
-            return;
+            return false;
         }
 
         String direcao = comando.getSegundaPalavra();
 
         // Tenta sair do ambiente atual
         Ambiente proximaSala = salaAtual.getSaida(direcao);
+        boolean interagiu = false;
 
         if (proximaSala == null) {
             System.out.println("Não há esse local!");
         } else {
-            salaAtual = proximaSala;
 
-            if (salaAtual instanceof SalaItemPorta) {
-                
-                String municao = ((SalaItemPorta) salaAtual).getItem();
-                
-                System.out.println("Você está em " + salaAtual.getDescricao() + ".");
-                System.out.println("Nela, você encontra " + municao + " e guarda.");
-
-                aventureiro.adicionarItem(municao,
-                        "Objeto que completa uma arma específica.");
-                System.out.println("O item foi adicionado ao inventário!");
+            if (proximaSala instanceof SalaItemPorta) {
+                interagiu = interagirComSalaItemPorta((SalaItemPorta) proximaSala);
+            } else {
+                salaAtual = proximaSala;
             }
 
             System.out.println(salaAtual.getDescricaoLonga());
-        
+
         }
+
+        return interagiu;
+
     }
 
     /**
-     * "Sair" foi digitado. Verifica o resto do comando pra ver
-     * se nos queremos realmente sair do jogo.
+     * Responsável pelas interações do aventureiro com salas com itens.
      * 
-     * @return true, se este comando sai do jogo, false, caso contrario
+     * @param sala A sala que o aventureiro entrou.
+     * @return true se o aventureiro destrancou a porta, caso contrário false
      */
-    private boolean sair(Comando comando) {
-        if (comando.temSegundaPalavra()) {
-            System.out.println("Sair?");
+    private boolean interagirComSalaItemPorta(SalaItemPorta sala) {
+        if (!sala.isTrancado()) {
+            System.out.println("Você já visitou essa sala...");
             return false;
-        } else {
-            return true; // sinaliza que nos queremos sair
         }
+
+        String municao = sala.getItem();
+
+        System.out.println("Você está em " + sala.getDescricao() + ".");
+        System.out.println("Nela, você encontra " + municao + " e guarda.");
+
+        aventureiro.adicionarItem(municao,
+                "Objeto que completa uma arma específica.");
+        System.out.println("O item foi adicionado ao inventário!");
+
+        sala.setTrancado(false);
+        salaAtual = sala;
+
+        return true;
+
     }
+
 }

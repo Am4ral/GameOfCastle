@@ -73,6 +73,14 @@ public class Aventureiro {
         inventario.adicionarItem(nome, descricao);
     }
 
+    public void removerItem(String nome){
+        inventario.removerItem(nome);
+    }
+
+    public boolean existeItem(String nome) {
+        return inventario.existeItem(nome);
+    }
+
     /**
      * Adiciona as chaves fornecidas no início do jogo ao inventário.
      */

@@ -19,28 +19,22 @@ import java.util.Scanner;
  */
 public class Analisador {
     private PalavrasComando comandos; // guarda todas as palavras de comando validas
-    private Scanner entrada; // origem da entrada de comandos
 
     /**
      * Cria um analisador para ler do terminal.
      */
     public Analisador() {
         comandos = new PalavrasComando();
-        entrada = new Scanner(System.in);
     }
 
     /**
      * @return O proximo comando do usuario
      */
-    public Comando getComando() {
-
-        String inputLinha; // armazena uma linha inteira
+    public Comando getComando(String inputLinha) {
         String palavra1 = null;
         String palavra2 = null;
 
         System.out.print("> "); // imprime o prompt
-
-        inputLinha = entrada.nextLine();
 
         // Tenta encontrar ate duas palavras na linha
         Scanner tokenizer = new Scanner(inputLinha);
@@ -67,7 +61,7 @@ public class Analisador {
     /**
      * Imprime a lista de palavras de comandos válidas.
      */
-    public void mostrarComandos() {
-        comandos.mostrarTodos();
+    public String mostrarComandos() {
+        return comandos.mostrarTodos();
     }
 }

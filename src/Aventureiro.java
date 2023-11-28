@@ -1,3 +1,5 @@
+import java.util.List;
+
 /**
  * Classe Aventureiro - um personagem do jogo Game Of Castle
  * 
@@ -17,6 +19,7 @@ public class Aventureiro {
     private int pontosDeVida;
     private String arma;
     private Inventario inventario;
+    private String nome;
 
     /**
      * Cria o aventureiro com nome e arma escolhida. Inicialmente, começa com 100
@@ -25,9 +28,9 @@ public class Aventureiro {
      * @param nome O nome do aventureiro.
      * @param arma A arma do aventureiro.
      */
-    public Aventureiro(String arma) {
+    public Aventureiro(String nome) {
+        this.nome = nome;
         pontosDeVida = 100;
-        this.arma = arma;
         inventario = new Inventario();
         receberChaves();
     }
@@ -46,6 +49,18 @@ public class Aventureiro {
      */
     public String getArma() {
         return arma;
+    }
+
+    public void setArma(String arma) {
+        this.arma = arma;
+    }
+
+    /**
+     * 
+     * @return O nome do aventureiro
+     */
+    public String getNome() {
+        return nome;
     }
 
     /**
@@ -71,6 +86,10 @@ public class Aventureiro {
      */
     public void adicionarItem(String nome, String descricao) {
         inventario.adicionarItem(nome, descricao);
+    }
+
+    public List<Item> getItens() {
+        return inventario.getItens();
     }
 
     /**

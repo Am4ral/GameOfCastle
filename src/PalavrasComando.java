@@ -40,10 +40,11 @@ public class PalavrasComando {
     /**
      * Imprime todos os comandos válidos do System.out.
      */
-    public void mostrarTodos() {
+    public String mostrarTodos() {
+        String comandos = "";
         for (String command : validCommands) {
-            System.out.print(command + "  ");
+            comandos += command + "  ";
         }
-        System.out.println();
+        return comandos + "\n";
     }
 }

@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import java.util.Scanner;
-
 /**
  * Essa eh a classe principal da aplicacao "World of Zull".
  * "World of Zuul" eh um jogo de aventura muito simples, baseado em texto.
@@ -32,20 +30,18 @@ public class Jogo {
     private final List<String> itensFase1 = new ArrayList<>();
 
     private Aventureiro aventureiro;
-    private Scanner entrada;
+    private String[] armas = { "Espada", "Estilingue", "Revólver", "Arco" };
 
     /**
      * Cria o jogo e incializa seu mapa interno.
      */
     public Jogo() {
-
-        entrada = new Scanner(System.in);
         analisador = new Analisador();
 
-        itensFase1.add("uma aljava com flechas");
-        itensFase1.add("um saquinho com pedras");
-        itensFase1.add("um cartucho de munições");
-        itensFase1.add("uma pedra de amolar");
+        itensFase1.add("Aljava com flechas");
+        itensFase1.add("Saquinho com pedras");
+        itensFase1.add("Cartucho de munições");
+        itensFase1.add("Pedra de amolar");
 
         criarAmbiente();
     }
@@ -84,77 +80,66 @@ public class Jogo {
         salaAtual = salaEntrada; // ambiente em que é iniciado o jogo
     }
 
-    private void personalizarAventureiro() {
-        String arma = escolheArmas();
-        aventureiro = new Aventureiro(arma);
+    public void personalizarAventureiro(String nome) {
+        aventureiro = new Aventureiro(nome);
     }
 
-    private String escolheArmas() {
-
-        String[] armas = { "Espada", "Estilingue", "Revólver", "Arco" };
+    public String exibirMensagemArma() {
+        String mensagemArmas = "Escolha o número da sua arma:\n";
 
         for (int i = 0; i < armas.length; i++) {
-            System.out.println((i + 1) + " - " + armas[i]);
+            mensagemArmas += (i + 1) + " - " + armas[i] + "\n";
         }
 
-        System.out.print("Escolha o número da sua arma: ");
+        return mensagemArmas;
+    }
 
-        int posicao = entrada.nextInt();
+    private String escolheArma(String arma) {
+        int posicao = Integer.parseInt(arma);
         posicao -= 1;
 
-        while (true) {
-            if (posicao < 0 || posicao > armas.length) {
-                System.out.println("Essa arma não existe. Por favor, digite um número válido.");
-                System.out.print("Escolha o número da sua arma: ");
-                posicao = entrada.nextInt();
-            } else {
-                return armas[posicao];
-            }
+        if (posicao < 0 || posicao > armas.length - 1) {
+            throw new IndexOutOfBoundsException(
+                    "Essa arma não existe. Por favor, digite um número válido.\nEscolha o número da sua arma:\n");
         }
-
+        return armas[posicao];
     }
 
     /**
      * Rotina principal do jogo. Fica em loop ate terminar o jogo.
      */
-    public void jogar() {
+    public String jogar(String comandoUsuario) {
 
-        imprimirBoasVindas();
-        personalizarAventureiro();
-        imprimirContextoInicial();
+        Comando comando = analisador.getComando(comandoUsuario);
+        return processarComando(comando);
 
-        // Entra no loop de comando principal. Aqui nos repetidamente lemos
-        // comandos e os executamos ate o jogo terminar.
+    }
 
-        boolean terminado = false;
-        while (!terminado) {
-            Comando comando = analisador.getComando();
-            terminado = processarComando(comando);
-        }
-        System.out.println("Obrigado por jogar. Ate mais!");
+    public String mensagemFimJogo() {
+        return "Obrigado por jogar. Ate mais!";
+    }
+
+    public String getComandoUsuario(String mensagem) {
+        return mensagem;
     }
 
     /**
      * Imprime a mensagem de abertura para o jogador.
      */
-    private void imprimirBoasVindas() {
-        System.out.println("\nBem vindo ao Game of Castle!");
-        System.out.println("Game of Castle é um jogo aventura incrível.");
-        System.out.println("Digite 'help' se precisar de ajuda.\n");
+    public String imprimirBoasVindas() {
+        return "Bem vindo ao Game of Castle!\nGame of Castle é um jogo aventura incrível.\nDigite 'help' se precisar de ajuda.\n\n";
     }
 
-    private void imprimirContextoInicial() {
-        System.out.println("\nVocê é um aventureiro e está prestes a entrar em um grande castelo.");
-        System.out.println("Na entrada, você se encontra com um ancião e recebe duas chaves. Além disso, " +
-                "ele te passa uma dica sobre a sala que possui um item para completar sua arma:");
-        System.out.println(/* dica da sala */);
-        System.out.println(salaAtual.getDescricao());
-        System.out.println("\nA sua frente há um enorme portão. A sua esquerda há duas portas e a direita também.\n" +
-                "Curioso, você se aproxima do portão maior. Não há fechadura. Você tenta abrí-lo, porém, o portão não se move.\n"
-                +
-                "Sem sucesso, você retorna.\n");
-        System.out.println(salaAtual.getDescricaoLonga());
+    public String imprimirContextoInicial() {
 
+        return "\nVocê é um aventureiro e está prestes a entrar em um grande castelo.\n"
+                + "Na entrada, você se encontra com um ancião e recebe duas chaves.\n"
+                + "Além disso, ele te passa uma dica sobre a sala que possui um item para completar sua arma:"
+                // inserir dica
+                + salaAtual.getDescricao()
+                + "\nA sua frente há um enorme portão. A sua esquerda há duas portas e a direita também.\n"
+                + "Curioso, você se aproxima do portão maior. Não há fechadura. Você tenta abrí-lo, porém, o portão não se move.\n"
+                + "Sem sucesso, você retorna.\n" + salaAtual.getDescricaoLonga();
     }
 
     /**
@@ -163,24 +148,21 @@ public class Jogo {
      * @param comando O Comando a ser processado.
      * @return true se o comando finaliza o jogo, caso contrário false.
      */
-    private boolean processarComando(Comando comando) {
-        boolean querSair = false;
-
+    private String processarComando(Comando comando) {
         if (comando.ehDesconhecido()) {
-            System.out.println("Não sei o que você quer dizer...");
-            return false;
+            return "Não sei o que você quer dizer...";
         }
 
         String commandWord = comando.getPalavraDeComando();
-        if (commandWord.equals("ajuda")) {
-            imprimirAjuda();
-        } else if (commandWord.equals("ir")) {
-            irParaAmbiente(comando);
-        } else if (commandWord.equals("sair")) {
-            querSair = sair(comando);
-        }
 
-        return querSair;
+        if (commandWord.equals("ajuda")) {
+            return imprimirAjuda();
+        } else if (commandWord.equals("ir")) {
+            return irParaAmbiente(comando);
+        } else if (commandWord.equals("sair")) {
+            // querSair = sair(comando);
+        }
+        return "";
     }
 
     // Implementacoes dos comandos do usuario
@@ -188,16 +170,14 @@ public class Jogo {
     /**
      * Printe informacoes de ajuda.
      */
-    private void imprimirAjuda() {
-        System.out.println("Seus comandos são:");
-        analisador.mostrarComandos();
+    private String imprimirAjuda() {
+        return "Seus comandos são:\n" + analisador.mostrarComandos() + "\n";
     }
 
-    private void irParaAmbiente(Comando comando) {
+    private String irParaAmbiente(Comando comando) {
         if (!comando.temSegundaPalavra()) {
             // se nao ha segunda palavra, nao sabemos pra onde ir...
-            System.out.println("Ir para onde?");
-            return;
+            return "Ir para onde?";
         }
 
         String direcao = comando.getSegundaPalavra();
@@ -206,25 +186,50 @@ public class Jogo {
         Ambiente proximaSala = salaAtual.getSaida(direcao);
 
         if (proximaSala == null) {
-            System.out.println("Não há esse local!");
+            return "Não há esse local!\n";
         } else {
+            String retorno = "";
             salaAtual = proximaSala;
 
             if (salaAtual instanceof SalaItemPorta) {
-                
+
                 String municao = ((SalaItemPorta) salaAtual).getItem();
-                
-                System.out.println("Você está em " + salaAtual.getDescricao() + ".");
-                System.out.println("Nela, você encontra " + municao + " e guarda.");
 
                 aventureiro.adicionarItem(municao,
                         "Objeto que completa uma arma específica.");
-                System.out.println("O item foi adicionado ao inventário!");
-            }
 
-            System.out.println(salaAtual.getDescricaoLonga());
-        
+                retorno += "\nVocê está em " + salaAtual.getDescricao() + ".\n" + "Nela, você encontra " + municao
+                        + " e guarda.\n" + "O item foi adicionado ao inventário!\n";
+            }
+            retorno += salaAtual.getDescricaoLonga() + "\n";
+
+            return retorno + "\n";
         }
+    }
+
+    public int getVidaAventureiro() {
+        return aventureiro.getPontosDeVida();
+    }
+
+    public String getArmaAventureiro() {
+        return aventureiro.getArma();
+    }
+
+    public String getNomeAventureiro() {
+        return aventureiro.getNome();
+    }
+
+    public String setArmaAventureiro(String arma) {
+        try {
+            aventureiro.setArma(escolheArma(arma));
+        } catch (IndexOutOfBoundsException e) {
+            return e.getMessage();
+        }
+        return "";
+    }
+
+    public List<Item> getItensAventureiro() {
+        return aventureiro.getItens();
     }
 
     /**

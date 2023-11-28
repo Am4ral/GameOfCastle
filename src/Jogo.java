@@ -49,13 +49,13 @@ public class Jogo {
         armasItens.put("Revólver", "um cartucho de munições");
         armasItens.put("Arco", "uma aljava com flechas");
 
-        criarAmbiente();
+        criarCenarioFase1();
     }
 
     /**
      * Cria todos os ambientes e liga as saidas deles
      */
-    private void criarAmbiente() {
+    private void criarCenarioFase1() {
         // Ambientes Fase 1
         Ambiente salaEntrada;
         SalaItemPorta sala1, sala2, sala3, sala4;
@@ -81,10 +81,16 @@ public class Jogo {
         sala3.ajustarSaida("SalaEntrada", salaEntrada);
         sala4.ajustarSaida("SalaEntrada", salaEntrada);
 
-        // Ambientes Fase 2
-        // Ambientes Fase 3
-
         salaAtual = salaEntrada; // ambiente em que é iniciado o jogo
+    }
+
+    private void criarCenarioFase2() {
+
+        Ambiente salao;
+        salao = new Ambiente("em um salão enorme");
+
+        salaAtual = salao;
+
     }
 
     /**
@@ -158,28 +164,13 @@ public class Jogo {
         personalizarAventureiro();
         imprimirContextoInicial();
 
-        // Entra no loop de comando principal. Aqui nos repetidamente lemos
-        // comandos e os executamos ate a primeira fase terminar.
-        int salasAbertas = 0;
-        while (!estaPreparado() && salasAbertas < 2) {
-            Comando comando = analisador.getComando();
-            if (processarComando(comando)) {
-                salasAbertas++;
-            }
+        if (jogarFase1()) {
+            jogarFase2();
         }
-
-        if (!avancaDeFase()) {
-            imprimirDerrota();
-        } else {
-            System.out.println("\nVocê luta bravamente.");
-            System.out.println("Uma batalha intensa finaliza e você sai vitorioso!\n");
-        }
-
-        // O aventureiro possui o item necessário para melhorar sua arma?
 
         System.out.println("Obrigado por jogar!");
         System.out.println(
-                "Esse jogo foi desenvolvido por: João Pedro Ramalho, Marco Túlio Amaral, Matheus Bertoldo e Renan Ribeiro");
+                "Desenvolvido por: João Pedro Ramalho, Marco Túlio Amaral, Matheus Bertoldo e Renan Ribeiro");
     }
 
     /**
@@ -234,13 +225,50 @@ public class Jogo {
         return chaves.get(0);
     }
 
+    private void imprimirContextoFase2(){
+        System.out.println("As portas agora estão abertas e, então, você decide avançar.");
+        System.out.println("Você percorre um extenso corredor mal iluminado até alcançar um salão imenso\nque dá acesso a duas portas à esquerda e duas portas à direita.");
+        System.out.println("Ao centro, encontra-se um enorme portão feito de ferro.");
+        System.out.println("Você se aproxima e percebe que o mesmo encontra-se trancado e retorna.\n");
+        System.out.println(salaAtual.getDescricaoLonga());
+    }
+
+    /**
+     * Rotina e controle das decisões realizadas na fase 1.
+     * 
+     * @return true se passou de fase, caso contrário false.
+     */
+    private boolean jogarFase1() {
+
+        // Entra no loop de comando principal. Aqui nos repetidamente lemos
+        // comandos e os executamos ate a primeira fase terminar.
+        int salasAbertas = 0;
+        while (!estaPreparado() && salasAbertas < 2) {
+            Comando comando = analisador.getComando();
+            if (processarComando(comando)) {
+                salasAbertas++;
+            }
+        }
+
+        if (!avancaParaFase2()) {
+            System.out.println("O Orc te ataca brutalmente. Você é incapaz de se defender.");
+            imprimirDerrota();
+            return false;
+        }
+
+        System.out.println("\nVocê luta bravamente.");
+        System.out.println("Uma batalha intensa finaliza e você sai vitorioso!\n");
+
+        return true;
+    }
+
     /**
      * Imprime o contexto do evento e verifica se o aventureiro possui o item
      * necessário para passar de fase, mudando a narrativa do jogo.
      * 
      * @return true se o aventureiro pode passar de fase, caso contrário false.
      */
-    private boolean avancaDeFase() {
+    private boolean avancaParaFase2() {
         boolean passou = false;
 
         System.out.println("\nBatidas violentas em madeira começam a ecoar de fora da sala.");
@@ -270,6 +298,11 @@ public class Jogo {
      */
     private boolean estaPreparado() {
         return aventureiro.existeItem(armasItens.get(aventureiro.getArma()));
+    }
+
+    private void jogarFase2() {
+        criarCenarioFase2();
+        imprimirContextoFase2();
     }
 
     /**
@@ -374,7 +407,7 @@ public class Jogo {
 
         aventureiro.adicionarItem(municao,
                 "Objeto que completa uma arma específica.");
-        System.out.println("O item foi adicionado ao inventário!");
+        System.out.println("\nO item foi adicionado ao inventário!\n");
 
         sala.setTrancado(false);
         salaAtual = sala;

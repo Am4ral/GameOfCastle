@@ -12,4 +12,9 @@ public class SalaDano extends Ambiente {
         super(descricao);
         this.dano = rand.nextInt(danoMaximo)+1;
     }
+
+    public int getDano() {
+        return dano;
+    }
+
 }

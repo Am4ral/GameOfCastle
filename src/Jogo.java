@@ -1,5 +1,6 @@
 import ambientes.Ambiente;
 import ambientes.SalaItemPorta;
+import ambientes.dano.SalaInimigo;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -89,6 +90,32 @@ public class Jogo {
         Ambiente salao;
         salao = new Ambiente("em um salão enorme");
 
+        Ambiente sala5, sala6, sala7, sala8;
+        sala5 = new Ambiente("uma sala bem organizada");
+        sala6 = new SalaInimigo("uma sala vazia", 25, null);
+        sala7 = new SalaInimigo("uma sala vazia", 25, null);
+        sala8 = new SalaInimigo("uma sala vazia", 25, null);
+
+        List<Ambiente> ambientes = new ArrayList<>();
+
+        ambientes.add(sala5);
+        ambientes.add(sala6);
+        ambientes.add(sala7);
+        ambientes.add(sala8);
+
+        Collections.shuffle(ambientes);
+
+        // inicializa as saidas dos ambientes
+        salao.ajustarSaida("Sala5", ambientes.get(0));
+        salao.ajustarSaida("Sala6", ambientes.get(1));
+        salao.ajustarSaida("Sala7", ambientes.get(2));
+        salao.ajustarSaida("Sala8", ambientes.get(3));
+        
+        sala5.ajustarSaida("Salao", salao);
+        sala6.ajustarSaida("Salao", salao);
+        sala7.ajustarSaida("Salao", salao);
+        sala8.ajustarSaida("Salao", salao);
+
         salaAtual = salao;
 
     }
@@ -164,9 +191,9 @@ public class Jogo {
         personalizarAventureiro();
         imprimirContextoInicial();
 
-        if (jogarFase1()) {
+        //if (jogarFase1()) {
             jogarFase2();
-        }
+        //}
 
         System.out.println("Obrigado por jogar!");
         System.out.println(
@@ -227,7 +254,7 @@ public class Jogo {
 
     private void imprimirContextoFase2(){
         System.out.println("As portas agora estão abertas e, então, você decide avançar.");
-        System.out.println("Você percorre um extenso corredor mal iluminado até alcançar um salão imenso\nque dá acesso a duas portas à esquerda e duas portas à direita.");
+        System.out.println("Você percorre um extenso corredor mal iluminado até alcançar um salão imenso\nque dá acesso a duas portas à esquerda e a duas portas à direita.");
         System.out.println("Ao centro, encontra-se um enorme portão feito de ferro.");
         System.out.println("Você se aproxima e percebe que o mesmo encontra-se trancado e retorna.\n");
         System.out.println(salaAtual.getDescricaoLonga());
@@ -303,6 +330,20 @@ public class Jogo {
     private void jogarFase2() {
         criarCenarioFase2();
         imprimirContextoFase2();
+
+        boolean naoTerminou = false;
+        while (!naoTerminou) {
+            Comando comando = analisador.getComando();
+            naoTerminou = processarComando(comando);
+        }
+        
+        // sai do loop se morrer na sala, se morrer no enigma ou se passar
+
+        if(aventureiro.getPontosDeVida() <= 0){
+            imprimirDerrota();
+        }
+
+
     }
 
     /**
@@ -368,14 +409,17 @@ public class Jogo {
 
         // Tenta sair do ambiente atual
         Ambiente proximaSala = salaAtual.getSaida(direcao);
-        boolean interagiu = false;
+        boolean terminaJogo = false;
 
         if (proximaSala == null) {
             System.out.println("Não há esse local!");
         } else {
 
             if (proximaSala instanceof SalaItemPorta) {
-                interagiu = interagirComSalaItemPorta((SalaItemPorta) proximaSala);
+                terminaJogo = interagirComSalaItemPorta((SalaItemPorta) proximaSala);
+            } else if (proximaSala instanceof SalaInimigo) {
+                SalaInimigo sala = (SalaInimigo) proximaSala;
+                terminaJogo = interagirComSalaInimigo(sala, sala.getDano());
             } else {
                 salaAtual = proximaSala;
             }
@@ -384,7 +428,35 @@ public class Jogo {
 
         }
 
-        return interagiu;
+        return terminaJogo;
+
+    }
+
+    /**
+     * Reponsável pela interação do aventureiro com salas com inimigos.
+     * 
+     * @param sala A sala com inimigo que o aventureiro entrou.
+     * @param dano O dano que o aventureiro recebe do inimigo.
+     * @return  true se o aventureiro morre na sala, caso contrário false.
+     */
+    private boolean interagirComSalaInimigo(SalaInimigo sala, int dano) {
+        
+        System.out.println("Você é surpreendido por um esqueleto que surge do seu ponto cego.");
+        System.out.println("Ele te golpeia com uma faca pequena.");
+
+        aventureiro.recebeDano(dano);
+        System.out.println("\nVocê perdeu " + dano + " de vida.\n");
+
+        if(aventureiro.getPontosDeVida() <= 0){
+            return true;
+        }
+
+        System.out.println("Após sofrer o ataque, você usa " + aventureiro.getArma() + " e retribui o golpe, matando-o.");
+        System.out.println("Não há mais nada na sala.");
+
+        salaAtual = sala;
+        
+        return false;
 
     }
 

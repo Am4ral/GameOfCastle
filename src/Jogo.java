@@ -1,6 +1,8 @@
 import ambientes.Ambiente;
 import ambientes.SalaItemPorta;
+import ambientes.SalaNPC;
 import ambientes.dano.SalaInimigo;
+import entidades.NPC;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -339,8 +341,9 @@ public class Jogo {
         
         // sai do loop se morrer na sala, se morrer no enigma ou se passar
 
-        if(aventureiro.getPontosDeVida() <= 0){
+        if(!aventureiro.existeItem("Chave do Grande Portao")){
             imprimirDerrota();
+            return;
         }
 
 
@@ -375,12 +378,66 @@ public class Jogo {
             imprimirAjuda();
         } else if (commandWord.equals("ir")) {
             terminar = irParaAmbiente(comando);
+        } else if (commandWord.equals("investigar")){
+            terminar = investigar();
         }
 
         return terminar;
     }
 
     // Implementacoes dos comandos do usuario
+
+    private boolean investigar() {
+        
+        boolean morreu = false;
+        // Se estiver na sala com passagem secreta
+        if(salaAtual.getDescricao().equals("uma sala bem organizada")){
+            System.out.println("\nA sala apresentava um clima confortável destacado pela organização dos móveis.");
+            System.out.println("Observando um pouco melhor, você percebe um relevo por baixo do tapete.");
+            System.out.println("Curioso, você decide tirá-lo.");
+            System.out.println("\nVocê encotrou uma passagem secreta!\n");
+            if(interagirComPorao(salaAtual)){
+                morreu = true;
+            }
+        } else {
+            System.out.println("Não há nada de especial aqui.");
+        }
+    
+        return morreu;
+    }
+
+    private boolean interagirComPorao(Ambiente saida) {
+
+        NPC esfinge = new NPC("esfinge", "uma esfinge com feição séria");
+        SalaNPC porao = new SalaNPC("um porão um pouco escuro", esfinge);
+
+        porao.ajustarSaida("SalaConfortavel", saida);
+
+        salaAtual = porao;
+
+        System.out.println("Você desce um lance de escadas até chegar ao porão.");
+        System.out.println("Você encontra" + esfinge.getDescricao() + ", e ela diz:\n");
+        System.out.println("\"Aventureiro, você possui uma chance para aceitar meu enigma, caso contrário, morrerá aqui nesse porão.\"");
+        System.out.println("\"Preste atenção, não repetirei novamente\"\n");
+
+        String enigma = esfinge.getEnigmaAleatorio();
+        System.out.println(enigma);
+        
+        entrada.nextLine();
+        String resposta = entrada.nextLine();
+        
+        if(esfinge.acertouEnigma(resposta, enigma)){
+            System.out.println("\n\"Parabéns, você acertou.\"");
+            System.out.println("A esfinge some e um baú aparece.");
+            System.out.println("Você abre, encontra um chave muito bem detalhada e pega.\n");
+
+            aventureiro.adicionarItem("Chave do Grande Portao", "uma chave detalhada com entalhes em metal.");
+            System.out.println(salaAtual.getDescricaoLonga());
+
+            return false;
+        }
+        return true;
+    }
 
     /**
      * Imprime informações de ajuda.

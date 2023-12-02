@@ -45,6 +45,6 @@ public class PalavrasComando {
         for (String command : validCommands) {
             comandos += command + "  ";
         }
-        return comandos + "\n";
+        return comandos;
     }
 }

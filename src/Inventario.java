@@ -55,12 +55,9 @@ public class Inventario {
      * @throws Exception Exceção disparada caso não haja um item de nome
      *                   correspondente no inventário.
      */
-    public void removerItem(String nome) throws Exception {
+    public void removerItem(String nome){
         Item item = buscarItem(nome);
-
-        if (!itens.remove(item)) {
-            throw new Exception("O item solicitado para remoção não existe.");
-        }
+        itens.remove(item);
     }
 
     /**
@@ -72,6 +69,10 @@ public class Inventario {
     public boolean existeItem(String nome) {
         Item item = buscarItem(nome);
         return itens.contains(item);
+    }
+
+    public void removerTodosItens(){
+        itens.clear();
     }
 
 }

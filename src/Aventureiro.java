@@ -57,7 +57,7 @@ public class Aventureiro {
 
     /**
      * 
-     * @return O nome do aventureiro
+     * @return String representando o nome do aventureiro
      */
     public String getNome() {
         return nome;
@@ -90,6 +90,18 @@ public class Aventureiro {
 
     public List<Item> getItens() {
         return inventario.getItens();
+    }
+
+    public void removerItem(String nome){
+        inventario.removerItem(nome);
+    }
+
+    public boolean existeItem(String nome) {
+        return inventario.existeItem(nome);
+    }
+
+    public void limparInventario(){
+        inventario.removerTodosItens();
     }
 
     /**

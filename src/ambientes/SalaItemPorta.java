@@ -7,7 +7,7 @@ public class SalaItemPorta extends Ambiente{
     public SalaItemPorta(String descricao, String item) {
         super(descricao);
         this.item = item;
-        trancado = false;
+        trancado = true;
     }
 
     public SalaItemPorta(String descricao, String item, boolean trancado) {
@@ -36,5 +36,5 @@ public class SalaItemPorta extends Ambiente{
     public String getDescricaoLonga(){
         return direcoesDeSaida();
     }
-}
 
+}

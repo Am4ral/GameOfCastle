@@ -11,18 +11,15 @@ import java.awt.GridLayout;
 import java.awt.Image;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-// import java.util.concurrent.TimeUnit;
 
 public class InterfaceGrafica {
     private JFrame janela;
@@ -48,9 +45,11 @@ public class InterfaceGrafica {
     private JScrollPane painelTexto;
 
     private JTextArea textoJogo;
-    private JTextArea inputUsuario;
+    private JTextField inputUsuario;
+    private JLabel rotuloInserirResposta;
 
-    private JButton botaoEnviar;
+    private JButton botaoEnviarFase1;
+    private JButton botaoEnviarFase2;
     private JButton botaoIniciar;
 
     private ArrayList<ImageIcon> imagensMapa;
@@ -64,7 +63,8 @@ public class InterfaceGrafica {
         fonteRotulo = new Font("Arial Bold", 0, 25);
         fonteValor = new Font("Arial", 0, 18);
 
-        botaoEnviar = new JButton("Enviar");
+        botaoEnviarFase1 = new JButton("Enviar");
+        botaoEnviarFase2 = new JButton("Enviar");
 
         botaoIniciar = new JButton("Iniciar");
         botaoIniciar.setEnabled(false);
@@ -79,19 +79,24 @@ public class InterfaceGrafica {
         armaAventureiro = new JLabel("");
         painelCentro = new JLabel();
         imagemMapa = new JLabel();
+        imagemMapa.setSize(new Dimension(500,500));
+        imagemMapa.setBackground(new Color(16));
         tituloFase = new JLabel("Fase 1");
 
-        inputUsuario = new JTextArea("");
+        inputUsuario = new JTextField();
         inputUsuario.setEditable(false);
-        inputUsuario.setColumns(150);
+        inputUsuario.setColumns(122);
 
         textoJogo = new JTextArea("");
-
         painelTexto = new JScrollPane(textoJogo);
-        painelTexto.setPreferredSize(new Dimension(1500, 130));
-
+        painelTexto.setPreferredSize(new Dimension(1350, 120));
         textoJogo.setLineWrap(true);
         textoJogo.setEditable(false);
+
+        rotuloInserirResposta = new JLabel("Digite aqui sua resposta:");
+        rotuloInserirResposta.setFont(new Font("Arial Bold", 0, 13));
+
+        rotuloItens = new JLabel("Itens");
 
         painelEsquerda = new JPanel();
         painelDireita = new JPanel();
@@ -107,15 +112,6 @@ public class InterfaceGrafica {
         imagensMapa.add(new ImageIcon("assets/MapaFase2.png"));
         imagensMapa.add(new ImageIcon("assets/MapaFase3.png"));
 
-        botaoEnviar.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                atualizarTextoJogo(jogo.jogar(getComandoUsuario()));
-                atualizarItens(jogo.getItensAventureiro());
-                inputUsuario.setText("");
-            }
-        });
-
         botaoIniciar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -130,6 +126,33 @@ public class InterfaceGrafica {
                 } else {
                     atualizarTextoJogo(mensagemRetorno);
                 }
+                inputUsuario.setText("");
+            }
+        });
+
+        botaoEnviarFase1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String retorno = jogo.jogarFase1(getComandoUsuario());
+                if(retorno.contains("incapaz")){
+                    atualizarTextoJogo(retorno + jogo.imprimirDerrota() + jogo.mensagemFimJogo());
+                }else if (retorno.contains("vitorioso")){
+                    //mudar foto mapa
+                    tituloFase.setText("Fase 2");
+                    iniciarFase2();
+                    atualizarTextoJogo(retorno + "\n\nPASSOU DE FASE");
+                }else{
+                    atualizarTextoJogo(retorno);
+                }
+
+                atualizarItens(jogo.getItensAventureiro());
+                inputUsuario.setText("");
+            }
+        });
+
+        botaoEnviarFase2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
                 inputUsuario.setText("");
             }
         });
@@ -187,22 +210,20 @@ public class InterfaceGrafica {
 
         // centro
         painelCentro.setLayout(new BorderLayout());
-        imagemMapa.setIcon(imagensMapa.get(0));
+        imagemMapa.setText("QUERIA MUITO A FOTO AQUI");
+        imagemMapa.setIcon(new ImageIcon(imagensMapa.get(0).getImage().getScaledInstance(400, 400, 0)));
         imagemMapa.setHorizontalAlignment(JLabel.CENTER);
-
-        imagemMapa
-                .setIcon(new ImageIcon(imagensMapa.get(0).getImage().getScaledInstance(700, 700, Image.SCALE_SMOOTH)));
         painelCentro.add(imagemMapa, BorderLayout.CENTER);
         tituloFase.setHorizontalAlignment(JLabel.CENTER);
         tituloFase.setFont(fonteValor);
         painelCentro.add(tituloFase, BorderLayout.SOUTH);
-
         painelCentro.setBorder(bordaPaineis);
 
         // baixo
         painelBaixo.setPreferredSize(new Dimension(0, 210));
         painelBaixo.setBorder(bordaPaineis);
         painelBaixo.add(painelTexto);
+        painelBaixo.add(rotuloInserirResposta);
         painelBaixo.add(inputUsuario);
         painelBaixo.add(botaoIniciar);
 
@@ -253,11 +274,18 @@ public class InterfaceGrafica {
         }
 
         painelDireita.add(painelItens);
+        painelDireita.revalidate();
+        painelDireita.repaint();
     }
 
     private void iniciarJogo() {
         painelBaixo.remove(botaoIniciar);
-        painelBaixo.add(botaoEnviar);
+        painelBaixo.add(botaoEnviarFase1);
+    }
+
+    private void iniciarFase2() {
+        painelBaixo.remove(botaoEnviarFase1);
+        painelBaixo.add(botaoEnviarFase2);
     }
 
     private void mostrarTextoAtual() {

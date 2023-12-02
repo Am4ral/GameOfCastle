@@ -9,19 +9,24 @@ public class NPC {
     private String descricao;
     HashMap<String, String> enigmas;
     
-    private static Random rand;
-
     public NPC(String nome, String descricao) {
         this.nome = nome;
         this.descricao = descricao;
         enigmas = new HashMap<>();
-        adicionarEnigmas();
-
-        rand = new Random();
+        
+        if(nome.equals("Merschmann")){
+            adicionarEnigmasPPOO();
+        } else {
+            adicionarEnigmas();
+        }
     }
 
     private void adicionarEnigmas(){
         enigmas.put("lagrima", "\"É clara e salgada, cabe em um olho e pesa uma tonelada?\"");
+    }
+
+    private void adicionarEnigmasPPOO(){
+        enigmas.put("privada", "\"Qual deve ser a visibilidade dos atributos de uma classe\"");
     }
 
     public String getNome() {
@@ -31,6 +36,8 @@ public class NPC {
         return descricao;
     }
     public String getEnigmaAleatorio(){
+
+        Random rand = new Random();
         int indexEnigma = rand.nextInt(enigmas.size());
 
         int cont = 0;

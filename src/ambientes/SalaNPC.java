@@ -17,4 +17,13 @@ public class SalaNPC extends Ambiente{
     public void setNpc(NPC npc) {
         this.npc = npc;
     }
+
+    public String getEnigmaAleatorio(){
+        return npc.getEnigmaAleatorio();
+    }
+
+    public boolean acertouEnigma(String resposta, String enigma){
+        return npc.acertouEnigma(resposta, enigma);
+    }
+
 }

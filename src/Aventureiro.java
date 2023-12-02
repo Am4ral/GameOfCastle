@@ -29,7 +29,6 @@ public class Aventureiro {
         pontosDeVida = 100;
         this.arma = arma;
         inventario = new Inventario();
-        receberChaves();
     }
 
     /**
@@ -54,6 +53,7 @@ public class Aventureiro {
      */
     public void recebeDano(int dano) {
         pontosDeVida -= dano;
+        System.out.println("\nVocê perdeu " + dano + " de vida.\n");
     }
 
     /**
@@ -61,6 +61,7 @@ public class Aventureiro {
      */
     public void curarVida() {
         pontosDeVida = 100;
+        System.out.println("\nVocê curou todos seus pontos de vida!\n");
     }
 
     /**
@@ -70,23 +71,17 @@ public class Aventureiro {
      * @param descricao A descrição do item.
      */
     public void adicionarItem(String nome, String descricao) {
+        System.out.println("\nVocê adquiriu " + nome + "!\n");
         inventario.adicionarItem(nome, descricao);
     }
 
     public void removerItem(String nome){
+        System.out.println("\n" + nome + " foi removido do seu inventário.\n");
         inventario.removerItem(nome);
     }
 
     public boolean existeItem(String nome) {
         return inventario.existeItem(nome);
-    }
-
-    /**
-     * Adiciona as chaves fornecidas no início do jogo ao inventário.
-     */
-    private void receberChaves() {
-        adicionarItem("Chave simples", "Uma chave simples feita de metal.");
-        adicionarItem("Chave simples", "Uma chave simples feita de metal.");
     }
 
 }

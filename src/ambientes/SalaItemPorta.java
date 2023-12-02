@@ -32,10 +32,5 @@ public class SalaItemPorta extends Ambiente{
         this.trancado = trancado;
     }
 
-    @Override
-    public String getDescricaoLonga(){
-        return direcoesDeSaida();
-    }
-
 }
 

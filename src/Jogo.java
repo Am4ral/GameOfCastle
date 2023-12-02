@@ -207,11 +207,11 @@ public class Jogo {
         personalizarAventureiro();
         imprimirContextoInicial();
 
-        //if (jogarFase1()) {
+        if (jogarFase1()) {
             if (jogarFase2()) {
                 jogarFase3();
             }
-        //}
+        }
 
     }
 

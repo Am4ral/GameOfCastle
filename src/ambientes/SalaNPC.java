@@ -5,17 +5,13 @@ import entidades.NPC;
 public class SalaNPC extends Ambiente{
     private NPC npc;
 
-    public SalaNPC(String descricao, NPC npc) {
+    public SalaNPC(String descricao, String nomeNpc, String descricaoNpc) {
         super(descricao);
-        this.npc = npc;
+        npc = new NPC(nomeNpc, descricaoNpc);
     }
 
-    public NPC getNpc() {
-        return npc;
-    }
-
-    public void setNpc(NPC npc) {
-        this.npc = npc;
+    public String getNomeNpc() {
+        return npc.getNome();
     }
 
     public String getEnigmaAleatorio(){

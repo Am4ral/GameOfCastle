@@ -29,6 +29,7 @@ public class Ambiente {
      * 
      * @param descricao A descricao do ambiente.
      */
+
     public Ambiente(String descricao) {
         this.descricao = descricao;
         saidas = new HashMap<>();

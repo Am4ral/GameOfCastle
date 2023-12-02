@@ -1,9 +1,7 @@
 import ambientes.Ambiente;
+import ambientes.SalaDano;
 import ambientes.SalaItemPorta;
 import ambientes.SalaNPC;
-import ambientes.dano.SalaBoss;
-import ambientes.dano.SalaInimigo;
-import entidades.NPC;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -95,9 +93,9 @@ public class Jogo {
 
         Ambiente sala5, sala6, sala7, sala8;
         sala5 = new Ambiente("uma sala bem organizada");
-        sala6 = new SalaInimigo("uma sala vazia", 25, null);
-        sala7 = new SalaInimigo("uma sala vazia", 25, null);
-        sala8 = new SalaInimigo("uma sala vazia", 25, null);
+        sala6 = new SalaDano("uma sala vazia", 25);
+        sala7 = new SalaDano("uma sala vazia", 25);
+        sala8 = new SalaDano("uma sala vazia", 25);
 
         List<Ambiente> ambientes = new ArrayList<>();
 
@@ -126,9 +124,8 @@ public class Jogo {
 
     private void criarCenarioFase3() {
         
-        NPC mago = new NPC("Merschmann", "um mago além de seu tempo");
-        SalaNPC corredor = new SalaNPC("um corredor extenso", mago);
-        SalaBoss salaTrono = new SalaBoss("uma local gigantesco", 99, null);
+        SalaNPC corredor = new SalaNPC("um corredor extenso", "Merschmann", "um mago além de seu tempo");
+        SalaDano salaTrono = new SalaDano("uma caverna escondida", 99);
 
         corredor.ajustarSaida("Porta", salaTrono);
         
@@ -270,6 +267,9 @@ public class Jogo {
         return chaves.get(0);
     }
 
+    /**
+     * Imprime o contexto da fase 2.
+     */
     private void imprimirContextoFase2() {
         System.out.println("As portas agora estão abertas e, então, você decide avançar.");
         System.out.println(
@@ -344,6 +344,11 @@ public class Jogo {
         return aventureiro.existeItem(item);
     }
 
+    /**
+     * Rotina e controle das decisões realizadas na fase 2.
+     * 
+     * @return true se passou de fase, caso contrário false.
+     */
     private boolean jogarFase2() {
         criarCenarioFase2();
         imprimirContextoFase2();
@@ -354,7 +359,6 @@ public class Jogo {
             naoTerminou = processarComando(comando);
         }
 
-        // sai do loop se morrer na sala, se morrer no enigma ou se passar
         if (!avancaParaFase3()) {
             imprimirDerrota();
             return false;
@@ -363,10 +367,18 @@ public class Jogo {
         return true;
     }
 
+    /**
+     * Verifica se o aventureiro está vivo para avançar de fase.
+     * 
+     * @return true se possui mais que 0 de vida, false caso contrário.
+     */
     private boolean avancaParaFase3() {
         return (aventureiro.getPontosDeVida() > 0);
     }
 
+    /**
+     * Rotina e controle das decisões realizadas na fase 3.
+     */
     private void jogarFase3() {
 
         criarCenarioFase3();
@@ -382,6 +394,9 @@ public class Jogo {
         finalizar();
     }
 
+    /**
+     * Contextualiza o momento final do jogo, indicando sua vitória ou derrota.
+     */
     private void finalizar() {
         System.out.println("Você abre os portões que abrem para uma sala imensa.");
         System.out.println("Entrando na sala, você aprecia a imensidão do local.");
@@ -394,7 +409,7 @@ public class Jogo {
 
         System.out.println("\nEle sopra um enorme bafo gelado.");
 
-        SalaBoss salaTrono = ((SalaBoss) salaAtual);
+        SalaDano salaTrono = ((SalaDano) salaAtual);
 
         int dano = salaTrono.getDano();
         aventureiro.recebeDano(dano);
@@ -413,20 +428,21 @@ public class Jogo {
         } else {
             imprimirDerrota();
         }
+        imprimirCreditos();;
 
     }
 
-    private void imprimirVitoria() {
-        System.out.println("Parabéns! Você concluiu o jogo.");
-        System.out.println("Obrigado por jogar!");
-        imprimeCreditos();
-    }
-
-    private void imprimeCreditos() {
+    /**
+     * Impressão dos créditos aos desenvolvedores do jogo.
+     */
+    private void imprimirCreditos() {
         System.out.println(
                 "\nDesenvolvido por: João Pedro Ramalho, Marco Túlio Amaral, Matheus Bertoldo e Renan Ribeiro\n");
     }
 
+    /**
+     * Impressão do contexto da fase 3.
+     */
     private void imprimirContextoFase3() {
         System.out.println("\nOutro corredor mal iluminado, mas...");
         System.out.println(
@@ -435,6 +451,9 @@ public class Jogo {
         System.out.println("Ciente de que não há outro caminho, você avança.\n");
     }
 
+    /**
+     * Responsável pelo contexto de interação com o Mago presente na terceira fase.
+     */
     private void interagirComMago() {
         System.out.println("A cada passo, você se aproxima mais do homem que permanece estático.");
         System.out.println("Quando você passa ao seu lado, ele diz:\n");
@@ -457,6 +476,9 @@ public class Jogo {
         System.out.println(salaAtual.getDescricaoLonga());
     }
 
+    /**
+     * Criação do contexto de resposta do enigma do mago.
+     */
     private void responderEnigmaDoMago() {
 
         String enigma = ((SalaNPC) salaAtual).getEnigmaAleatorio();
@@ -490,8 +512,14 @@ public class Jogo {
         System.out.println("Sua vida se esvai.");
         System.out.println("A escuridão te consome.\n");
         System.out.println("Você está morto.\n");
+    }
 
-        imprimeCreditos();
+    /**
+     * Imprime a mensagem de vitória.
+     */
+    private void imprimirVitoria() {
+        System.out.println("Parabéns! Você concluiu o jogo.");
+        System.out.println("Obrigado por jogar!");
     }
 
     /**
@@ -520,6 +548,11 @@ public class Jogo {
         return terminar;
     }
 
+    /**
+     * Responsável pela ação de investigar nas salas do castelo.
+     * 
+     * @return true caso o comando finalize o jogo, caso contrário false.
+     */
     private boolean investigar() {
 
         boolean morreu = false;
@@ -540,28 +573,33 @@ public class Jogo {
         return morreu;
     }
 
+    /**
+     * Reponsável pela interação do aventureiro com o porão secreto.
+     * 
+     * @param saida A sala que da acesso ao porão para ajustar a saída.
+     * @return true caso o jogador erre o enigma e morra, caso contrário false.
+     */
     private boolean interagirComPorao(Ambiente saida) {
 
-        NPC esfinge = new NPC("esfinge", "uma esfinge com feição séria");
-        SalaNPC porao = new SalaNPC("um porão um pouco escuro", esfinge);
+        SalaNPC porao = new SalaNPC("um porão um pouco escuro", "esfinge", "uma esfinge com feição séria");
 
         porao.ajustarSaida("SalaConfortavel", saida);
 
         salaAtual = porao;
 
         System.out.println("Você desce um lance de escadas até chegar ao porão.");
-        System.out.println("Você encontra " + esfinge.getDescricao() + ", e ela diz:\n");
+        System.out.println("Você encontra " + porao.getNomeNpc() + ", e ela diz:\n");
         System.out.println(
                 "\"Aventureiro, você possui uma chance para aceitar meu enigma, caso contrário, morrerá aqui nesse porão.\"");
         System.out.println("\"Preste atenção, não repetirei novamente\"\n");
 
-        String enigma = esfinge.getEnigmaAleatorio();
+        String enigma = porao.getEnigmaAleatorio();
         System.out.println(enigma);
 
         entrada.nextLine();
         String resposta = entrada.nextLine();
 
-        if (esfinge.acertouEnigma(resposta, enigma)) {
+        if (porao.acertouEnigma(resposta, enigma)) {
             System.out.println("\n\"Parabéns, você acertou.\"");
             System.out.println("A esfinge some e um baú aparece.");
             System.out.println("Você abre, encontra um chave muito bem detalhada e pega.\n");
@@ -578,6 +616,11 @@ public class Jogo {
         return true;
     }
 
+    /**
+     * Responsável pela interação com o portão da segunda fase.
+     * 
+     * @return true caso o aventureiro abra, caso contrário false.
+     */
     private boolean interagirComPortao() {
         if (!estaPreparado("Chave do Grande Portao")) {
             System.out.println("\nHá uma fechadura...");
@@ -625,20 +668,18 @@ public class Jogo {
 
             if (proximaSala instanceof SalaItemPorta) {
                 terminaJogo = interagirComSalaItemPorta((SalaItemPorta) proximaSala);
-            } else if (proximaSala instanceof SalaInimigo) {
-                SalaInimigo sala = (SalaInimigo) proximaSala;
-                terminaJogo = interagirComSalaInimigo(sala, sala.getDano());
+            } else if (proximaSala instanceof SalaDano) {
+                SalaDano sala = (SalaDano) proximaSala;
+                terminaJogo = interagirComSalaDano(sala, sala.getDano());
             } else if (proximaSala.getDescricao() == "um enorme portão de metal") {
                 terminaJogo = interagirComPortao();
             } else {
                 salaAtual = proximaSala;
-                if (proximaSala instanceof SalaBoss) {
+                if (proximaSala.getDescricao().equals("uma caverna escondida")) {
                     return true;
                 }
             }
-
             System.out.println(salaAtual.getDescricaoLonga());
-
         }
 
         return terminaJogo;
@@ -652,7 +693,7 @@ public class Jogo {
      * @param dano O dano que o aventureiro recebe do inimigo.
      * @return true se o aventureiro morre na sala, caso contrário false.
      */
-    private boolean interagirComSalaInimigo(SalaInimigo sala, int dano) {
+    private boolean interagirComSalaDano(SalaDano sala, int dano) {
 
         System.out.println("Você é surpreendido por um esqueleto que surge do seu ponto cego.");
         System.out.println("Ele te golpeia com uma faca pequena.");

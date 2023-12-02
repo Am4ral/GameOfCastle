@@ -21,6 +21,7 @@ import java.util.HashMap;
 public class Ambiente {
     private String descricao;
     private HashMap<String, Ambiente> saidas; // armazena as saídas do ambiente
+    private boolean visitado;
 
     /**
      * Cria um ambiente com a "descricao" passada. Inicialmente, ele
@@ -31,6 +32,7 @@ public class Ambiente {
     public Ambiente(String descricao) {
         this.descricao = descricao;
         saidas = new HashMap<>();
+        visitado = false;
     }
 
     /**
@@ -94,5 +96,13 @@ public class Ambiente {
      */
     public Ambiente getSaida(String direcao) {
         return saidas.get(direcao);
+    }
+
+    public void visitar(){
+        visitado = true;
+    }
+
+    public boolean getVisitado(){
+        return visitado;
     }
 }

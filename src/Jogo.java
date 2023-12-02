@@ -526,11 +526,12 @@ public class Jogo {
 
         boolean morreu = false;
         // Se estiver na sala com passagem secreta
-        if (salaAtual.getDescricao().equals("uma sala bem organizada")) {
+        if (salaAtual.getDescricao().equals("uma sala bem organizada") && !salaAtual.getVisitado()) {
             System.out.println("\nA sala apresentava um clima confortável destacado pela organização dos móveis.");
             System.out.println("Observando um pouco melhor, você percebe um relevo por baixo do tapete.");
             System.out.println("Curioso, você decide tirá-lo.");
             System.out.println("\nVocê encotrou uma passagem secreta!\n");
+            salaAtual.visitar();
             if (interagirComPorao(salaAtual)) {
                 morreu = true;
             }

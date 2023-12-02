@@ -1,6 +1,8 @@
 import ambientes.Ambiente;
 import ambientes.SalaItemPorta;
 import ambientes.SalaNPC;
+import ambientes.dano.SalaBoss;
+import ambientes.dano.SalaDano;
 import ambientes.dano.SalaInimigo;
 import entidades.NPC;
 
@@ -112,13 +114,26 @@ public class Jogo {
         salao.ajustarSaida("Sala6", ambientes.get(1));
         salao.ajustarSaida("Sala7", ambientes.get(2));
         salao.ajustarSaida("Sala8", ambientes.get(3));
-        
+        salao.ajustarSaida("Porta", new Ambiente("um enorme portão de metal"));
+
         sala5.ajustarSaida("Salao", salao);
         sala6.ajustarSaida("Salao", salao);
         sala7.ajustarSaida("Salao", salao);
         sala8.ajustarSaida("Salao", salao);
 
         salaAtual = salao;
+
+    }
+
+    private void criarCenarioFase3() {
+        Ambiente corredor;
+        corredor = new Ambiente("um corredor extenso");
+        SalaBoss caverna = new SalaBoss("uma local gigantesco", 99, null);
+
+        corredor.ajustarSaida("Porta", caverna);
+        
+        salaAtual = corredor;
+        System.out.println(salaAtual.getDescricaoLonga());
 
     }
 
@@ -194,12 +209,11 @@ public class Jogo {
         imprimirContextoInicial();
 
         //if (jogarFase1()) {
-            jogarFase2();
+            if (jogarFase2()) {
+                jogarFase3();
+            }
         //}
 
-        System.out.println("Obrigado por jogar!");
-        System.out.println(
-                "Desenvolvido por: João Pedro Ramalho, Marco Túlio Amaral, Matheus Bertoldo e Renan Ribeiro");
     }
 
     /**
@@ -254,9 +268,10 @@ public class Jogo {
         return chaves.get(0);
     }
 
-    private void imprimirContextoFase2(){
+    private void imprimirContextoFase2() {
         System.out.println("As portas agora estão abertas e, então, você decide avançar.");
-        System.out.println("Você percorre um extenso corredor mal iluminado até alcançar um salão imenso\nque dá acesso a duas portas à esquerda e a duas portas à direita.");
+        System.out.println(
+                "Você percorre um extenso corredor mal iluminado até alcançar um salão imenso\nque dá acesso a duas portas à esquerda e a duas portas à direita.");
         System.out.println("Ao centro, encontra-se um enorme portão feito de ferro.");
         System.out.println("Você se aproxima e percebe que o mesmo encontra-se trancado e retorna.\n");
         System.out.println(salaAtual.getDescricaoLonga());
@@ -272,7 +287,7 @@ public class Jogo {
         // Entra no loop de comando principal. Aqui nos repetidamente lemos
         // comandos e os executamos ate a primeira fase terminar.
         int salasAbertas = 0;
-        while (!estaPreparado() && salasAbertas < 2) {
+        while (!estaPreparado(armasItens.get(aventureiro.getArma())) && salasAbertas < 2) {
             Comando comando = analisador.getComando();
             if (processarComando(comando)) {
                 salasAbertas++;
@@ -304,7 +319,7 @@ public class Jogo {
         System.out.println("Assustado, você retorna a sala de entrada para averiguar o barulho.");
         System.out.println("Algo está esmurrando a porta de forma violenta as portas que bloqueam o caminho!");
 
-        if (estaPreparado()) {
+        if (estaPreparado(armasItens.get(aventureiro.getArma()))) {
             System.out.println("\nCiente de que algo se aproxima, você se prepara para o pior.\n");
 
             aventureiro.removerItem(armasItens.get(aventureiro.getArma()));
@@ -325,11 +340,11 @@ public class Jogo {
      * 
      * @return true se possui o item, caso contrário false.
      */
-    private boolean estaPreparado() {
-        return aventureiro.existeItem(armasItens.get(aventureiro.getArma()));
+    private boolean estaPreparado(String item) {
+        return aventureiro.existeItem(item);
     }
 
-    private void jogarFase2() {
+    private boolean jogarFase2() {
         criarCenarioFase2();
         imprimirContextoFase2();
 
@@ -338,14 +353,132 @@ public class Jogo {
             Comando comando = analisador.getComando();
             naoTerminou = processarComando(comando);
         }
-        
-        // sai do loop se morrer na sala, se morrer no enigma ou se passar
 
-        if(!aventureiro.existeItem("Chave do Grande Portao")){
+        // sai do loop se morrer na sala, se morrer no enigma ou se passar
+        if (!avancaParaFase3()) {
             imprimirDerrota();
-            return;
+            return false;
         }
 
+        return true;
+    }
+
+    private boolean avancaParaFase3() {
+        return (aventureiro.getPontosDeVida() > 0);
+    }
+
+    private void jogarFase3() {
+
+        imprimirContextoFase3();
+        interagirComMago();
+        criarCenarioFase3();
+
+        boolean naoTerminou = false;
+        while (!naoTerminou) {
+            Comando comando = analisador.getComando();
+            naoTerminou = processarComando(comando);
+        }
+
+        finalizar();
+    }
+
+    private void finalizar() {
+        System.out.println("Você abre os portões que abrem para uma sala imensa.");
+        System.out.println("Entrando na sala, você aprecia a imensidão do local.");
+        System.out.println(
+                "Olhando para o teto, você percebe que somente o teto não esta iluminado o que da uma impressão de profundidade.");
+        System.out.println("De repente, duas luzes azuis acendem no teto.");
+        System.out.println("Você começa a ouvir barulhos de respiração profunda ecoando no local.");
+        System.out.println("Um dragão se revela completamente descendo do teto.");
+        System.out.println("Você perturbou seu descanso...");
+
+        System.out.println("\nEle sopra um enorme bafo gelado.");
+
+        SalaDano salaDano = ((SalaDano) salaAtual);
+        SalaBoss caverna = ((SalaBoss) salaDano);
+
+        int dano = caverna.getDano();
+        System.out.println("\nVocê sofreu " + dano + " de dano.");
+        aventureiro.recebeDano(dano);
+
+        System.out.println("Você se lembra de tudo que passou até chegar nesse momento.");
+        System.out.println("Tudo isso não pode ter sido em vão.");
+        System.out.println("Então, você se prepara e começa o combate.");
+
+        if (aventureiro.getPontosDeVida() > 0) {
+            System.out.println("\nApós longos minutos de combate, você derrota o dragão.");
+            System.out.println("Como troféu, você pega o coração do dragão e guarda.");
+
+            aventureiro.adicionarItem("Coração do Dragão", "o coração do maior dragão de gelo já existente");
+            System.out.println("\nVocê adquiriu Coração do Dragão.");
+
+            imprimirVitoria();
+        } else {
+            imprimirDerrota();
+        }
+
+    }
+
+    private void imprimirVitoria() {
+        System.out.println("Parabéns! Você concluiu o jogo. Obrigado por jogar.");
+        imprimeCreditos();
+    }
+
+    private void imprimeCreditos() {
+        System.out.println(
+                "\nDesenvolvido por: João Pedro Ramalho, Marco Túlio Amaral, Matheus Bertoldo e Renan Ribeiro");
+    }
+
+    private void imprimirContextoFase3() {
+        System.out.println("Outro corredor mal iluminado, mas...");
+        System.out.println(
+                "Ao fundo, um homem com vestes que impossibilitam ver seu rosto\nencontra-se iluminado por uma única tocha.");
+        System.out.println("Ainda mais ao fundo, há outra porta de metal iluminada por duas tochas em cada lateral.");
+        System.out.println("Ciente de que não há outro caminho, você avança.");
+    }
+
+    private void interagirComMago() {
+        System.out.println("A cada passo, você se aproxima mais do homem que permanece estático.");
+        System.out.println("Quando você passa ao seu lado, ele diz:");
+        System.out.println("\"Gostaria de jogar um jogo comigo?\"");
+
+        System.out.println("Escolha (Sim/Nao): ");
+        String resposta = entrada.nextLine();
+
+        while (!resposta.equals("Sim") && !resposta.equals("Nao")) {
+            System.out.println("Resposta inválida. Tente novamente.");
+        }
+
+        if (resposta.equals("Sim")) {
+            responderEnigmaDoMago();
+        }
+
+        System.out.println("Você segue seu caminho até a porta.");
+    }
+
+    private void responderEnigmaDoMago() {
+
+        NPC mago = new NPC("Mershmann", "um mago além de seu tempo");
+        String enigma = mago.getEnigmaAleatorio();
+
+        System.out.println("O homem se desembrulha de suas vestes revelando ser uma mago.");
+        System.out.println("\"Que bom aventureiro! Eis a sua pergunta\"");
+        System.out.println(enigma);
+
+        String resposta = entrada.nextLine();
+
+        if (mago.acertouEnigma(resposta, enigma)) {
+            System.out.println("\"Parabéns colega! Tome esse presente.\"");
+            System.out.println("Você recebe uma poção de cura e toma.");
+
+            aventureiro.curarVida();
+            System.out.println("\nVocê curou todos seus pontos de vida.\n");
+        } else {
+            System.out.println("\"Está tudo bem, as vezes nós erramos.");
+        }
+
+        System.out.println("Você agradece e se vira para partir");
+        System.out.println("Quando virá novamente para trás, o mago não está mais lá.");
 
     }
 
@@ -357,6 +490,8 @@ public class Jogo {
         System.out.println("Sua vida se esvai.");
         System.out.println("A escuridão te consome.\n");
         System.out.println("Você está morto.\n");
+
+        imprimeCreditos();
     }
 
     /**
@@ -378,7 +513,7 @@ public class Jogo {
             imprimirAjuda();
         } else if (commandWord.equals("ir")) {
             terminar = irParaAmbiente(comando);
-        } else if (commandWord.equals("investigar")){
+        } else if (commandWord.equals("investigar")) {
             terminar = investigar();
         }
 
@@ -388,21 +523,21 @@ public class Jogo {
     // Implementacoes dos comandos do usuario
 
     private boolean investigar() {
-        
+
         boolean morreu = false;
         // Se estiver na sala com passagem secreta
-        if(salaAtual.getDescricao().equals("uma sala bem organizada")){
+        if (salaAtual.getDescricao().equals("uma sala bem organizada")) {
             System.out.println("\nA sala apresentava um clima confortável destacado pela organização dos móveis.");
             System.out.println("Observando um pouco melhor, você percebe um relevo por baixo do tapete.");
             System.out.println("Curioso, você decide tirá-lo.");
             System.out.println("\nVocê encotrou uma passagem secreta!\n");
-            if(interagirComPorao(salaAtual)){
+            if (interagirComPorao(salaAtual)) {
                 morreu = true;
             }
         } else {
             System.out.println("Não há nada de especial aqui.");
         }
-    
+
         return morreu;
     }
 
@@ -417,16 +552,17 @@ public class Jogo {
 
         System.out.println("Você desce um lance de escadas até chegar ao porão.");
         System.out.println("Você encontra" + esfinge.getDescricao() + ", e ela diz:\n");
-        System.out.println("\"Aventureiro, você possui uma chance para aceitar meu enigma, caso contrário, morrerá aqui nesse porão.\"");
+        System.out.println(
+                "\"Aventureiro, você possui uma chance para aceitar meu enigma, caso contrário, morrerá aqui nesse porão.\"");
         System.out.println("\"Preste atenção, não repetirei novamente\"\n");
 
         String enigma = esfinge.getEnigmaAleatorio();
         System.out.println(enigma);
-        
+
         entrada.nextLine();
         String resposta = entrada.nextLine();
-        
-        if(esfinge.acertouEnigma(resposta, enigma)){
+
+        if (esfinge.acertouEnigma(resposta, enigma)) {
             System.out.println("\n\"Parabéns, você acertou.\"");
             System.out.println("A esfinge some e um baú aparece.");
             System.out.println("Você abre, encontra um chave muito bem detalhada e pega.\n");
@@ -436,6 +572,22 @@ public class Jogo {
 
             return false;
         }
+
+        System.out.println("Uma espada é cravada em suas costas e atravessa seu peito.");
+        aventureiro.recebeDano(aventureiro.getPontosDeVida());
+
+        return true;
+    }
+
+    private boolean interagirComPortao() {
+        if (!estaPreparado("Chave do Grande Portao")) {
+            System.out.println("Há uma fechadura...");
+            System.out.println("Talvez exista uma chave capaz de abrí-la.");
+            return false;
+        }
+
+        System.out.println("Você abre a fechadura com a chave que encontrou.");
+        System.out.println("O portão se abre...");
         return true;
     }
 
@@ -477,6 +629,10 @@ public class Jogo {
             } else if (proximaSala instanceof SalaInimigo) {
                 SalaInimigo sala = (SalaInimigo) proximaSala;
                 terminaJogo = interagirComSalaInimigo(sala, sala.getDano());
+            } else if (proximaSala.getDescricao() == "um enorme portão de metal") {
+                terminaJogo = interagirComPortao();
+            } else if (proximaSala instanceof SalaBoss) {
+                return true;
             } else {
                 salaAtual = proximaSala;
             }
@@ -494,25 +650,26 @@ public class Jogo {
      * 
      * @param sala A sala com inimigo que o aventureiro entrou.
      * @param dano O dano que o aventureiro recebe do inimigo.
-     * @return  true se o aventureiro morre na sala, caso contrário false.
+     * @return true se o aventureiro morre na sala, caso contrário false.
      */
     private boolean interagirComSalaInimigo(SalaInimigo sala, int dano) {
-        
+
         System.out.println("Você é surpreendido por um esqueleto que surge do seu ponto cego.");
         System.out.println("Ele te golpeia com uma faca pequena.");
 
         aventureiro.recebeDano(dano);
         System.out.println("\nVocê perdeu " + dano + " de vida.\n");
 
-        if(aventureiro.getPontosDeVida() <= 0){
+        if (aventureiro.getPontosDeVida() <= 0) {
             return true;
         }
 
-        System.out.println("Após sofrer o ataque, você usa " + aventureiro.getArma() + " e retribui o golpe, matando-o.");
+        System.out
+                .println("Após sofrer o ataque, você usa " + aventureiro.getArma() + " e retribui o golpe, matando-o.");
         System.out.println("Não há mais nada na sala.");
 
         salaAtual = sala;
-        
+
         return false;
 
     }

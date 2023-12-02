@@ -134,7 +134,6 @@ public class Jogo {
         
         salaAtual = corredor;
         System.out.println(salaAtual.getDescricaoLonga());
-
     }
 
     /**
@@ -632,10 +631,11 @@ public class Jogo {
                 terminaJogo = interagirComSalaInimigo(sala, sala.getDano());
             } else if (proximaSala.getDescricao() == "um enorme portão de metal") {
                 terminaJogo = interagirComPortao();
-            } else if (proximaSala instanceof SalaBoss) {
-                return true;
             } else {
                 salaAtual = proximaSala;
+                if (proximaSala instanceof SalaBoss) {
+                    return true;
+                }
             }
 
             System.out.println(salaAtual.getDescricaoLonga());

@@ -1,4 +1,5 @@
 package jogador;
+import java.util.List;
 
 /**
  * Classe jogador.Aventureiro - um personagem do jogo Game Of Castle
@@ -19,17 +20,17 @@ public class Aventureiro {
     private int pontosDeVida;
     private String arma;
     private Inventario inventario;
+    private String nome;
 
     /**
      * Cria o aventureiro com nome e arma escolhida. Inicialmente, começa com 100
      * pontos de vida e duas chaves em seu inventário.
      * 
      * @param nome O nome do aventureiro.
-     * @param arma A arma do aventureiro.
      */
-    public Aventureiro(String arma) {
+    public Aventureiro(String nome) {
+        this.nome = nome;
         pontosDeVida = 100;
-        this.arma = arma;
         inventario = new Inventario();
     }
 
@@ -39,6 +40,10 @@ public class Aventureiro {
      */
     public int getPontosDeVida() {
         return pontosDeVida;
+    }
+
+    public void setArma(String arma) {
+        this.arma = arma;
     }
 
     /**
@@ -51,39 +56,51 @@ public class Aventureiro {
 
     /**
      * 
+     * @return String representando o nome do aventureiro
+     */
+    public String getNome() {
+        return nome;
+    }
+
+    /**
+     * 
      * @param dano O dano causado ao aventureiro.
      */
-    public void recebeDano(int dano) {
+    public String recebeDano(int dano) {
         pontosDeVida -= dano;
-        System.out.println("\nVocê perdeu " + dano + " de vida.\n");
+        return " Você perdeu " + dano + " de vida.";
     }
 
     /**
      * Restaura a vida do aventureiro para 100 pontos.
      */
-    public void curarVida() {
+    public String curarVida() {
         pontosDeVida = 100;
-        System.out.println("\nVocê curou todos seus pontos de vida!\n");
+        return "\nVocê curou todos seus pontos de vida!";
     }
 
     /**
      * Cria o item e adiciona ao inventário do jogador.
      * 
-     * @param nome      O nome do item.
+     * @param nomeItem      O nome do item.
      * @param descricao A descrição do item.
      */
-    public void adicionarItem(String nome, String descricao) {
-        System.out.println("\nVocê adquiriu " + nome + "!\n");
-        inventario.adicionarItem(nome, descricao);
+
+    public String adicionarItem(String nomeItem, String descricao) {
+        inventario.adicionarItem(nomeItem, descricao);
+        return "\n\n" + nomeItem + " foi adicionado(a) ao inventário!";
     }
 
-    public void removerItem(String nome){
-        System.out.println("\n" + nome + " foi removido do seu inventário.\n");
+    public List<Item> getItens() {
+        return inventario.getItens();
+    }
+
+    public String removerItem(String nome){
         inventario.removerItem(nome);
+        return "\n\n" + nome + " foi removido do inventário!";
     }
 
     public boolean existeItem(String nome) {
         return inventario.existeItem(nome);
     }
-
 }

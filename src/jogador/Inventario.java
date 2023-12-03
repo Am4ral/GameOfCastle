@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Inventario {
 
+public class Inventario {
     private ArrayList<Item> itens;
 
     /**
@@ -72,5 +72,4 @@ public class Inventario {
         Item item = buscarItem(nome);
         return itens.contains(item);
     }
-
 }

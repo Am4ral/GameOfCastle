@@ -2,6 +2,8 @@ import ambientes.Ambiente;
 import ambientes.SalaDano;
 import ambientes.SalaItemPorta;
 import ambientes.SalaNPC;
+import jogador.*;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -131,7 +133,6 @@ public class Jogo {
 
     /**
      * Aleatoriza a localização dos itens nas salas da primeira fase.
-     *
      * @return Lista aleatorizada de itens.
      */
     private List<String> aleatorizarItens() {
@@ -197,7 +198,11 @@ public class Jogo {
 
     /**
      * Rotina principal do jogo.
+<<<<<<< HEAD
      *
+=======
+     * 
+>>>>>>> origin/criando-interface-grafica
      * @throws Exception
      */
     public String jogarFase1(String comandoUsuario) {
@@ -262,7 +267,11 @@ public class Jogo {
     /**
      * Verifica se o aventureiro possui o item necessário correspondente a sua arma
      * no inventário.
+<<<<<<< HEAD
      *
+=======
+     * 
+>>>>>>> origin/criando-interface-grafica
      * @return true se possui o item, caso contrário false.
      */
     private boolean estaPreparado(String item) {
@@ -292,10 +301,11 @@ public class Jogo {
      */
     public String finalizar() {
         String mensagemRetorno = "\n\nVocê abre o portão e entrando na sala, você aprecia a imensidão do local."
-                + "\nDe repente, duas luzes azuis acendem no teto e você começa a ouvir barulhos de respiração profunda ecoando no local."
-                + "\nUm dragão se revela completamente, descendo do teto."
-                + "\nVocê perturbou seu descanso... Ele sopra um enorme bafo gelado."
-                + "\nVocê se lembra de tudo que passou até chegar nesse momento. Tudo isso não pode ter sido em vão. Então, você se prepara e começa o combate.";
+
+        + "\nDe repente, duas luzes azuis acendem no teto e você começa a ouvir barulhos de respiração profunda ecoando no local."
+        + "\nUm dragão se revela completamente, descendo do teto."
+        + "\nVocê perturbou seu descanso... Ele sopra um enorme bafo gelado."
+        + "\nVocê se lembra de tudo que passou até chegar nesse momento. Tudo isso não pode ter sido em vão. Então, você se prepara e começa o combate.";
 
         SalaDano salaTrono = ((SalaDano) salaAtual);
 
@@ -304,7 +314,7 @@ public class Jogo {
 
         if (aventureiro.getPontosDeVida() > 0) {
             mensagemRetorno += "\nApós longos minutos de combate, você derrota o dragão. Como troféu, você pega o seu coração e guarda."
-                    + aventureiro.adicionarItem("Coração do Dragão", "o coração do maior dragão de gelo já existente");
+            + aventureiro.adicionarItem("Coração do Dragão", "o coração do maior dragão de gelo já existente");
         } else {
             mensagemRetorno += imprimirDerrota();
         }
@@ -354,7 +364,11 @@ public class Jogo {
 
     /**
      * Imprime uma dica. A dica consiste em qual sala o item necessário não está.
+<<<<<<< HEAD
      *
+=======
+     * 
+>>>>>>> origin/criando-interface-grafica
      * @return Sala em que o item não está.
      */
     private String imprimirDica() {
@@ -403,7 +417,11 @@ public class Jogo {
 
     /**
      * Responsável pela ação de investigar nas salas do castelo.
+<<<<<<< HEAD
      *
+=======
+     * 
+>>>>>>> origin/criando-interface-grafica
      * @return true caso o comando finalize o jogo, caso contrário false.
      */
     private String investigar() {
@@ -424,7 +442,11 @@ public class Jogo {
 
     /**
      * Reponsável pela interação do aventureiro com o porão secreto.
+<<<<<<< HEAD
      *
+=======
+     * 
+>>>>>>> origin/criando-interface-grafica
      * @param saida A sala que da acesso ao porão para ajustar a saída.
      * @return true caso o jogador erre o enigma e morra, caso contrário false.
      */
@@ -457,7 +479,11 @@ public class Jogo {
 
     /**
      * Responsável pela interação com o portão da segunda fase.
+<<<<<<< HEAD
      *
+=======
+     * 
+>>>>>>> origin/criando-interface-grafica
      * @return true caso o aventureiro abra, caso contrário false.
      */
     private String interagirComPortao() {
@@ -518,7 +544,11 @@ public class Jogo {
 
     /**
      * Reponsável pela interação do aventureiro com salas com inimigos.
+<<<<<<< HEAD
      *
+=======
+     * 
+>>>>>>> origin/criando-interface-grafica
      * @param sala A sala com inimigo que o aventureiro entrou.
      * @param dano O dano que o aventureiro recebe do inimigo.
      * @return true se o aventureiro morre na sala, caso contrário false.

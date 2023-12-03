@@ -23,10 +23,20 @@ public class NPC {
 
     private void adicionarEnigmas(){
         enigmas.put("lagrima", "\"É clara e salgada, cabe em um olho e pesa uma tonelada?\"");
+        enigmas.put("porta", "\"O que dá o poder de atravessar paredes?\"");
+        enigmas.put("gelo", "\"O que não se pode queimar no fogo nem afundar na água?\"");
+        enigmas.put("fogo", "\"O que precisa ser alimentado para viver, mas morre se recebe água?\"");
+        enigmas.put("ancora", "\"O que quando você precisa, você joga fora e, quando não precisa mais, pega de volta?\"");
+        enigmas.put("segredo", "\"O que quando você tem, quer compartilhar, mas se compartilha, não tem mais?\"");
     }
 
     private void adicionarEnigmasPPOO(){
-        enigmas.put("privada", "\"Qual deve ser a visibilidade dos atributos de uma classe\"");
+        enigmas.put("private", "\"Qual deve ser a visibilidade dos atributos de uma classe?\"");
+        enigmas.put("extends", "\"Qual a palavra utilizada para indicar que uma classe é subclasse de outra?\"");
+        enigmas.put("encapsulamento", "\"Qual é o termo que descreve a prática de esconder a implementação interna \nde um objeto e restringir o acesso aos detalhes internos?\"");
+        enigmas.put("interface", "\"Que elemento em programação orientada a objetos define um conjunto de métodos que \numa classe deve implementar, sem especificar a implementação real desses métodos?\"");
+        enigmas.put("construtor", "\"Que método especial em uma classe é responsável por inicializar os atributos quando \num objeto é criado?\"");
+        enigmas.put("final", "\"Qual a palavra-chave que define um atributo como constante?\"");
     }
 
     public String getNome() {
@@ -60,4 +70,3 @@ public class NPC {
     }
 
 }
-

@@ -1,5 +1,7 @@
+package jogador;
+
 /**
- * Classe Aventureiro - um personagem do jogo Game Of Castle
+ * Classe jogador.Aventureiro - um personagem do jogo Game Of Castle
  * 
  * Essa classe é parte da aplicacao "Castle Of Castle".
  * O aventureiro representa o personagem com o qual o usuário/jogador joga. Ele

@@ -2,6 +2,7 @@ import ambientes.Ambiente;
 import ambientes.SalaDano;
 import ambientes.SalaItemPorta;
 import ambientes.SalaNPC;
+import jogador.Aventureiro;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -589,7 +590,7 @@ public class Jogo {
         System.out.println("Você desce um lance de escadas até chegar ao porão.");
         System.out.println("Você encontra " + porao.getNomeNpc() + ", e ela diz:\n");
         System.out.println(
-                "\"Aventureiro, você possui uma chance para aceitar meu enigma, caso contrário, morrerá aqui nesse porão.\"");
+                "\"jogador.Aventureiro, você possui uma chance para aceitar meu enigma, caso contrário, morrerá aqui nesse porão.\"");
         System.out.println("\"Preste atenção, não repetirei novamente\"\n");
 
         String enigma = porao.getEnigmaAleatorio();

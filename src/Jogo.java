@@ -125,7 +125,7 @@ public class Jogo {
     private void criarCenarioFase3() {
         
         SalaNPC corredor = new SalaNPC("um corredor extenso", "Merschmann", "um mago além de seu tempo");
-        SalaDano salaTrono = new SalaDano("uma caverna escondida", 99);
+        SalaDano salaTrono = new SalaDano("covil do Dragão", 99);
 
         corredor.ajustarSaida("Porta", salaTrono);
         
@@ -460,7 +460,6 @@ public class Jogo {
         System.out.println("\"Gostaria de jogar um jogo comigo?\"");
 
         System.out.println("Escolha (Sim/Nao): ");
-        entrada.nextLine();
         String resposta = entrada.nextLine();
 
         while (!resposta.equals("Sim") && !resposta.equals("Nao")) {
@@ -668,14 +667,14 @@ public class Jogo {
 
             if (proximaSala instanceof SalaItemPorta) {
                 terminaJogo = interagirComSalaItemPorta((SalaItemPorta) proximaSala);
-            } else if (proximaSala instanceof SalaDano) {
+            } else if (proximaSala.getDescricao().equals("uma sala vazia")) {
                 SalaDano sala = (SalaDano) proximaSala;
-                terminaJogo = interagirComSalaDano(sala, sala.getDano());
+                terminaJogo = interagirComSalaInimigo(sala, sala.getDano());
             } else if (proximaSala.getDescricao() == "um enorme portão de metal") {
                 terminaJogo = interagirComPortao();
             } else {
                 salaAtual = proximaSala;
-                if (proximaSala.getDescricao().equals("uma caverna escondida")) {
+                if (proximaSala.getDescricao().equals("covil do Dragão")) {
                     return true;
                 }
             }
@@ -693,7 +692,7 @@ public class Jogo {
      * @param dano O dano que o aventureiro recebe do inimigo.
      * @return true se o aventureiro morre na sala, caso contrário false.
      */
-    private boolean interagirComSalaDano(SalaDano sala, int dano) {
+    private boolean interagirComSalaInimigo(SalaDano sala, int dano) {
 
         System.out.println("Você é surpreendido por um esqueleto que surge do seu ponto cego.");
         System.out.println("Ele te golpeia com uma faca pequena.");

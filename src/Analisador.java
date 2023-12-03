@@ -34,8 +34,6 @@ public class Analisador {
         String palavra1 = null;
         String palavra2 = null;
 
-        System.out.print("> "); // imprime o prompt
-
         // Tenta encontrar ate duas palavras na linha
         Scanner tokenizer = new Scanner(inputLinha);
         if (tokenizer.hasNext()) {

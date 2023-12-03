@@ -70,9 +70,4 @@ public class Inventario {
         Item item = buscarItem(nome);
         return itens.contains(item);
     }
-
-    public void removerTodosItens(){
-        itens.clear();
-    }
-
 }

@@ -32,7 +32,6 @@ public class Aventureiro {
         this.nome = nome;
         pontosDeVida = 100;
         inventario = new Inventario();
-        receberChaves();
     }
 
     /**
@@ -43,16 +42,16 @@ public class Aventureiro {
         return pontosDeVida;
     }
 
+    public void setArma(String arma) {
+        this.arma = arma;
+    }
+
     /**
      * 
      * @return A arma do aventureiro
      */
     public String getArma() {
         return arma;
-    }
-
-    public void setArma(String arma) {
-        this.arma = arma;
     }
 
     /**
@@ -67,49 +66,40 @@ public class Aventureiro {
      * 
      * @param dano O dano causado ao aventureiro.
      */
-    public void recebeDano(int dano) {
+    public String recebeDano(int dano) {
         pontosDeVida -= dano;
+        return "\nVocê perdeu " + dano + " de vida.";
     }
 
     /**
      * Restaura a vida do aventureiro para 100 pontos.
      */
-    public void curarVida() {
+    public String curarVida() {
         pontosDeVida = 100;
+        return "\nVocê curou todos seus pontos de vida!";
     }
 
     /**
      * Cria o item e adiciona ao inventário do jogador.
      * 
-     * @param nome      O nome do item.
+     * @param nomeItem      O nome do item.
      * @param descricao A descrição do item.
      */
-    public void adicionarItem(String nome, String descricao) {
-        inventario.adicionarItem(nome, descricao);
+    public String adicionarItem(String nomeItem, String descricao) {
+        inventario.adicionarItem(nomeItem, descricao);
+        return "\nVocê adquiriu " + nomeItem + "!";
     }
 
     public List<Item> getItens() {
         return inventario.getItens();
     }
 
-    public void removerItem(String nome){
+    public String removerItem(String nome){
         inventario.removerItem(nome);
+        return "\n" + nome + " foi removido do inventário!";
     }
 
     public boolean existeItem(String nome) {
         return inventario.existeItem(nome);
     }
-
-    public void limparInventario(){
-        inventario.removerTodosItens();
-    }
-
-    /**
-     * Adiciona as chaves fornecidas no início do jogo ao inventário.
-     */
-    private void receberChaves() {
-        adicionarItem("Chave simples", "Uma chave simples feita de metal.");
-        adicionarItem("Chave simples", "Uma chave simples feita de metal.");
-    }
-
 }

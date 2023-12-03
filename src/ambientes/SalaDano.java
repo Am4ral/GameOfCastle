@@ -1,6 +1,4 @@
-package ambientes.dano;
-
-import ambientes.Ambiente;
+package ambientes;
 
 import java.util.Random;
 

@@ -20,10 +20,6 @@ public class SalaItemPorta extends Ambiente{
         return item;
     }
 
-    public void setItem(String item) {
-        this.item = item;
-    }
-
     public boolean isTrancado() {
         return trancado;
     }
@@ -31,10 +27,4 @@ public class SalaItemPorta extends Ambiente{
     public void setTrancado(boolean trancado) {
         this.trancado = trancado;
     }
-
-    @Override
-    public String getDescricaoLonga(){
-        return direcoesDeSaida();
-    }
-
 }

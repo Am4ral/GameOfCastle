@@ -68,7 +68,7 @@ public class Aventureiro {
      */
     public String recebeDano(int dano) {
         pontosDeVida -= dano;
-        return "\nVocê perdeu " + dano + " de vida.";
+        return " Você perdeu " + dano + " de vida.";
     }
 
     /**
@@ -87,7 +87,7 @@ public class Aventureiro {
      */
     public String adicionarItem(String nomeItem, String descricao) {
         inventario.adicionarItem(nomeItem, descricao);
-        return "\nVocê adquiriu " + nomeItem + "!";
+        return "\n\n" + nomeItem + " foi adicionado(a) ao inventário!";
     }
 
     public List<Item> getItens() {
@@ -96,7 +96,7 @@ public class Aventureiro {
 
     public String removerItem(String nome){
         inventario.removerItem(nome);
-        return "\n" + nome + " foi removido do inventário!";
+        return "\n\n" + nome + " foi removido do inventário!";
     }
 
     public boolean existeItem(String nome) {

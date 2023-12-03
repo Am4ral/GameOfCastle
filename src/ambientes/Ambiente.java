@@ -60,7 +60,7 @@ public class Ambiente {
      * @return Uma descrição longa do ambiente.
      */
     public String getDescricaoLonga() {
-        return "Você está " + descricao + ".\n" + direcoesDeSaida();
+        return "Você está em " + descricao + ".\n" + direcoesDeSaida();
     }
 
     /**

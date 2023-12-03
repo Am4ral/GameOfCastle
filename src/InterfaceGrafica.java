@@ -49,7 +49,6 @@ public class InterfaceGrafica {
 
     private JButton botaoEnviarFase1;
     private JButton botaoEnviarFase2;
-    private JButton botaoEnviarFase3;
     private JButton botaoIniciar;
 
     private ArrayList<ImageIcon> imagensMapa;
@@ -65,7 +64,6 @@ public class InterfaceGrafica {
 
         botaoEnviarFase1 = new JButton("Enviar");
         botaoEnviarFase2 = new JButton("Enviar");
-        botaoEnviarFase3 = new JButton("Enviar");
 
         botaoIniciar = new JButton("Iniciar");
         botaoIniciar.setEnabled(false);
@@ -135,21 +133,19 @@ public class InterfaceGrafica {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String retorno = jogo.jogarFase1(getComandoUsuario());
-                if (retorno.contains("incapaz")) {
+                System.out.println(jogo.getItensAventureiro());
+                if (retorno.contains("Você é incapaz de se defender...")) {
                     atualizarVida(jogo.getVidaAventureiro());
-                    atualizarTextoJogo(retorno + jogo.imprimirDerrota());
-                    limparCampoInput();
+                    atualizarTextoJogo(imprimirComandoUsuario() + retorno + jogo.imprimirDerrota());
                     esperar();
                     encerrarJogo();
                 } else if (retorno.contains("vitorioso")) {
-                    atualizarTextoJogo(retorno);
-                    imagemMapa.setIcon(new ImageIcon(imagensMapa.get(1).getImage().getScaledInstance(550, 500, 0)));
-                    tituloFase.setText("Fase 2");
+                    atualizarTextoJogo(imprimirComandoUsuario() + retorno);
                     iniciarFase2();
                 } else if (retorno.equals("sair")) {
                     ConfirmarSaida();
                 } else {
-                    atualizarTextoJogo(retorno);
+                    atualizarTextoJogo(imprimirComandoUsuario() + retorno);
                 }
 
                 atualizarItens(jogo.getItensAventureiro());
@@ -160,50 +156,32 @@ public class InterfaceGrafica {
         botaoEnviarFase2.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String retorno = jogo.jogarFase1(getComandoUsuario());
-                if (retorno.contains("incapaz")) {
-                    atualizarVida(jogo.getVidaAventureiro());
-                    atualizarTextoJogo(retorno + jogo.imprimirDerrota());
-                    limparCampoInput();
-                    // encerrarJogo();
-                } else if (retorno.contains("vitorioso")) {
-                    imagemMapa.setIcon(new ImageIcon(imagensMapa.get(2).getImage().getScaledInstance(550, 500, 0)));
-                    tituloFase.setText("Fase 3");
-                    iniciarFase2();
-                } else if (retorno.equals("sair")) {
-                    ConfirmarSaida();
-                } else {
-                    atualizarTextoJogo(retorno);
-                }
-
-                atualizarItens(jogo.getItensAventureiro());
-                limparCampoInput();
-            }
-        });
-
-        botaoEnviarFase3.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String retorno = jogo.jogarFase1(getComandoUsuario());
-                if (retorno.contains("incapaz")) {
-                    atualizarTextoJogo(retorno + jogo.imprimirDerrota());
-                    limparCampoInput();
+                String retorno = jogo.jogarFase2(getComandoUsuario());
+                if (retorno.contains("morto")) {
+                    atualizarTextoJogo(imprimirComandoUsuario() + retorno);
                     encerrarJogo();
-                } else if (retorno.contains("vitorioso")) {
-                   
+                } else if (retorno.contains("portão se abre")) {
+                    atualizarTextoJogo(imprimirComandoUsuario() + retorno);
+                    iniciarFase3();
                 } else if (retorno.equals("sair")) {
                     ConfirmarSaida();
+                } else if (retorno.contains("porão")){
+                    atualizarTextoJogo(imprimirComandoUsuario() + retorno);
+                    atualizarTextoJogo(jogo.responderEnigma());
+                    if(jogo.getVidaAventureiro() == 0){
+                        encerrarJogo();
+                    }
                 } else {
-                    atualizarTextoJogo(retorno);
+                    atualizarTextoJogo(imprimirComandoUsuario() + retorno);
                 }
 
+                atualizarVida(jogo.getVidaAventureiro());
                 atualizarItens(jogo.getItensAventureiro());
                 limparCampoInput();
             }
         });
 
         montarInterface();
-
     }
 
     public void montarInterface() {
@@ -281,9 +259,13 @@ public class InterfaceGrafica {
         janela.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
+    private String imprimirComandoUsuario(){
+        return "\n\n>> " + getComandoUsuario();
+    }
+
     private void esperar() {
         try {
-            Thread.sleep(1000);
+            Thread.sleep(500);
         } catch (InterruptedException e1) {
             e1.printStackTrace();
         }
@@ -299,6 +281,8 @@ public class InterfaceGrafica {
     }
 
     private void encerrarJogo() {
+        atualizarVida(0);
+        esperar();
         JOptionPane.showMessageDialog(null, "Obrigado por jogar Game Of Castlle!");
         System.exit(0);
     }
@@ -354,8 +338,30 @@ public class InterfaceGrafica {
     }
 
     private void iniciarFase2() {
+        imagemMapa.setIcon(new ImageIcon(imagensMapa.get(1).getImage().getScaledInstance(550, 500, 0)));
+        tituloFase.setText("Fase 2");
         painelBaixo.remove(botaoEnviarFase1);
         painelBaixo.add(botaoEnviarFase2);
+        jogo.criarCenarioFase2();
+        JOptionPane.showMessageDialog(null, "Parabéns, você passou para a Fase 2!");
+        atualizarTextoJogo(jogo.imprimirContextoFase2());
+    }
+
+    private void iniciarFase3(){
+        imagemMapa.setIcon(new ImageIcon(imagensMapa.get(2).getImage().getScaledInstance(550, 500, 0)));
+        tituloFase.setText("Fase 3");
+        inputUsuario.setEnabled(false);
+        botaoEnviarFase2.setEnabled(false);
+        jogo.criarCenarioFase3();
+        JOptionPane.showMessageDialog(null, "Parabéns, você passou para a Fase 3!");
+        atualizarTextoJogo(jogo.imprimirContextoFase3() + jogo.interagirComMago());
+        String retorno = jogo.finalizar();
+        if(retorno.contains("Você está morto")){
+            atualizarTextoJogo(retorno);
+            encerrarJogo();
+        }else{
+            atualizarTextoJogo(retorno);
+        }
     }
 
     private void mostrarTextoAtual() {

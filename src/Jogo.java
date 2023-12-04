@@ -55,10 +55,6 @@ public class Jogo {
         // Collections.shuffle(itensFase1);
         List<String> itensFase1 = aleatorizarItens();
 
-        for (String item : itensFase1) {
-            System.out.println(item);
-        }
-
         sala1 = new SalaItemPorta("uma sala simples", itensFase1.get(0));
         sala2 = new SalaItemPorta("uma sala simples", itensFase1.get(1));
         sala3 = new SalaItemPorta("uma sala simples", itensFase1.get(2));

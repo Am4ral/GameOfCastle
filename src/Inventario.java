@@ -2,20 +2,31 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Classe Inventario - um sistema de armazenamento de itens do aventureiro.
+ * 
+ * Essa classe é parte da aplicação "Game Of Castle".
+ * O inventário representa o armazenamento de itens do aventureiro durante o jogo.
+ * 
+ * No inventário, podem ser adicionados, encontrados e removidos itens. Além de
+ * ser permitido o clone da mesma para acesso, não interferindo no conteúdo original.
+ * 
+ * @author Matheus Bertoldo
+ * @version 20.11.2023
+ */
 public class Inventario {
 
     private ArrayList<Item> itens;
 
     /**
-     * Instancia o inventário responsável por armazenar itens.
+     * Instancia um inventário.
      */
     public Inventario() {
         itens = new ArrayList<>();
     }
 
     /**
-     * 
-     * @return Uma lista não modificável dos itens do inventário.
+     * @return Uma lista não modificável dos itens presentes no inventário.
      */
     public List<Item> getItens() {
         return Collections.unmodifiableList(itens);
@@ -47,13 +58,9 @@ public class Inventario {
     }
 
     /**
-     * Remove o item correspondete ao nome fornecido e dispara uma exceção caso o
-     * item não esteja presente no inventário para controle durante o
-     * desenvolvimento.
+     * Remove o item correspondente ao nome fornecido.
      * 
-     * @param nome O nome do item.
-     * @throws Exception Exceção disparada caso não haja um item de nome
-     *                   correspondente no inventário.
+     * @param nome O nome do item a ser removido.
      */
     public void removerItem(String nome) {
         Item item = buscarItem(nome);
@@ -64,7 +71,7 @@ public class Inventario {
      * Define se o item existe ou não no inventário a partir do nome fornecido.
      * 
      * @param nome O nome do item.
-     * @return Um booleano "true" caso exista e, caso contrário, "false".
+     * @return true caso o item exista caso contrário false.
      */
     public boolean existeItem(String nome) {
         Item item = buscarItem(nome);

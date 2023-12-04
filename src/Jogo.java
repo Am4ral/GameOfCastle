@@ -4,20 +4,20 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Essa eh a classe principal da aplicacao "World of Zull".
- * "World of Zuul" eh um jogo de aventura muito simples, baseado em texto.
- * Usuarios podem caminhar em um cenario. E eh tudo! Ele realmente
- * precisa ser estendido para fazer algo interessante!
+ * Essa é a classe principal da aplicação "Game Of Castle".
  * 
- * Para jogar esse jogo, crie uma instancia dessa classe e chame o metodo
+ * O aventureiro/usuário pode caminhar nos cenário e passar pelos desafios
+ * apresentados durante sua jornada.
+ * 
+ * Para jogar esse jogo, crie uma instancia dessa classe e chame o método
  * "jogar".
  * 
- * Essa classe principal cria e inicializa todas as outras: ela cria os
- * ambientes, cria o analisador e comeca o jogo. Ela também avalia e
- * executa os comandos que o analisador retorna.
+ * Essa classe cria e inicializa diversas outras, tornando-se a
+ * principal.
  * 
- * @author Michael Kölling and David J. Barnes (traduzido por Julio Cesar Alves)
- * @version 2011.07.31 (2016.02.01)
+ * @author Marco Túlio Amaral, Matheus Bertoldo, João Pedro Ramalho e Renan
+ *         Ribeiro Pereira.
+ * @version 01.12.2023
  */
 
 public class Jogo {
@@ -43,7 +43,7 @@ public class Jogo {
     }
 
     /**
-     * Cria todos os ambientes e liga as saidas deles
+     * Cria todos os ambientes da fase 1 e liga as saídas deles
      */
     private void criarCenarioFase1() {
         // Ambientes Fase 1
@@ -78,6 +78,10 @@ public class Jogo {
         salaAtual = salaEntrada; // ambiente em que é iniciado o jogo
     }
 
+    /**
+     * Cria todos os ambientes da fase 2, aleatoriza os tipos das salas
+     * e liga suas respectivas saídas.
+     */
     private void criarCenarioFase2() {
         Ambiente salao;
         salao = new Ambiente("um salão enorme");
@@ -112,6 +116,9 @@ public class Jogo {
         salaAtual = salao;
     }
 
+    /**
+     * Cria todos os ambientes da fase 3 e liga as saídas deles.
+     */
     private void criarCenarioFase3() {
 
         SalaNPC corredor = new SalaNPC("um corredor extenso", "Merschmann", "um mago além de seu tempo");
@@ -140,6 +147,12 @@ public class Jogo {
         return itens;
     }
 
+    /**
+     * Instancia o aventureiro definindo seu nome e adicionando as chaves recebidas
+     * no início do jogo.
+     * 
+     * @param nome O nome do aventureiro.
+     */
     public void personalizarAventureiro(String nome) {
         aventureiro = new Aventureiro(nome);
 
@@ -147,6 +160,12 @@ public class Jogo {
         aventureiro.adicionarItem("Chave simples", "uma chave simples de metal");
     }
 
+    /**
+     * Exibe a mensagem durante a escolha da arma que o aventureiro utilizará,
+     * sendo representadas por números.
+     * 
+     * @return A mensagem de escolha das armas.
+     */
     public String exibirMensagemArma() {
         String mensagemArmas = "Escolha o número da sua arma:\n";
 
@@ -162,6 +181,13 @@ public class Jogo {
         return mensagemArmas;
     }
 
+    /**
+     * Define a arma que o aventureiro usará.
+     * 
+     * @param valorArma O número em formato String da arma representada em
+     *                  exibirMensagemArma();
+     * @return A arma escolhida.
+     */
     private String escolheArma(String valorArma) {
         int posicao = -1;
 
@@ -189,9 +215,10 @@ public class Jogo {
     }
 
     /**
-     * Rotina principal do jogo.
+     * Rotina principal da primeira fase.
      * 
-     * @throws Exception
+     * @param comandoUsuario O comando enviado pelo usuário.
+     * @return A mensagem impressa na interface a partir de suas escolhas.
      */
     public String jogarFase1(String comandoUsuario) {
         boolean estaPreparado = possuiItem(armasItens.get(aventureiro.getArma()));
@@ -230,25 +257,19 @@ public class Jogo {
     }
 
     /**
-     * Rotina e controle das decisões realizadas.
+     * Controle das decisões realizadas.
+     * 
+     * @param comandoUsuario O comando do usuário.
+     * @return A mensagem impressa na interface a partir de suas escolhas.
      */
     public String tratarComando(String comandoUsuario) {
         Comando comando = analisador.getComando(comandoUsuario);
         return processarComando(comando);
     }
 
-    // /**
-    // * Verifica se o aventureiro está vivo para avançar de fase.
-    // *
-    // * @return true se possui mais que 0 de vida, false caso contrário.
-    // */
-    // private boolean avancaParaFase3() {
-    // return (aventureiro.getPontosDeVida() > 0);
-    // }
-
     /**
      * Verifica se o aventureiro possui o item necessário correspondente a sua arma
-     * no inventário.
+     * no inventário que interfere nas ações durante o jogo.
      * 
      * @return true se possui o item, caso contrário false.
      */
@@ -257,7 +278,7 @@ public class Jogo {
     }
 
     /**
-     * Imprime a mensagem de derrota.
+     * @return A mensagem de derrota enviada quando o aventureiro morre.
      */
     public String imprimirDerrota() {
         return "\nSeus olhos fecham..."
@@ -266,12 +287,20 @@ public class Jogo {
                 + "\nVocê está morto!";
     }
 
+    /**
+     * @param mensagem A mensagem enviada através da interface.
+     * @return A mensagem enviada.
+     */
     public String getComandoUsuario(String mensagem) {
         return mensagem;
     }
 
     /**
-     * Contextualiza o momento final do jogo, indicando sua vitória ou derrota.
+     * Contextualiza o momento final do jogo, indicando sua vitória ou derrota
+     * baseada
+     * em sua vida.
+     * 
+     * @return A mensagem de final do jogo.
      */
     public String finalizar() {
         String mensagemRetorno = "\n\nVocê abre o portão e entrando na sala, você aprecia a imensidão do local."
@@ -296,12 +325,15 @@ public class Jogo {
     }
 
     /**
-     * Imprime a mensagem de abertura para o jogador.
+     * @return A mensagem de abertura para o jogador.
      */
     public String imprimirBoasVindas() {
         return "Bem vindo ao Game of Castle!\nGame of Castle é um jogo aventura incrível.\nApós escolher sua arma, digite 'ajuda' se precisar de ajuda.\n\n";
     }
 
+    /**
+     * @return A mensagem de inicío do jogo.
+     */
     public String imprimirContextoInicial() {
         return "\n\nVocê é um aventureiro e está prestes a entrar em um grande castelo."
                 + "\nNa entrada, você se encontra com um ancião e recebe duas chaves."
@@ -313,7 +345,7 @@ public class Jogo {
     }
 
     /**
-     * Imprime o contexto da fase 2.
+     * @return A mensagem de contexto da fase 2.
      */
     public String imprimirContextoFase2() {
         criarCenarioFase2();
@@ -326,7 +358,7 @@ public class Jogo {
     }
 
     /**
-     * Impressão do contexto da fase 3.
+     * @return A mensagem de contexto da fase 3.
      */
     public String imprimirContextoFase3() {
 
@@ -341,14 +373,15 @@ public class Jogo {
                 + "\nO homem retira seu manto revelando ser um mago. Quando você passa ao seu lado, ele diz:\n";
     }
 
+    /**
+     * Define a vida do aventureiro para 0.
+     */
     public void finalizarJogador() {
         aventureiro.recebeDano(getVidaAventureiro());
     }
 
     /**
-     * Imprime uma dica. A dica consiste em qual sala o item necessário não está.
-     * 
-     * @return Sala em que o item não está.
+     * @return Uma dica sobre a sala onde o item necessário não está.
      */
     private String imprimirDica() {
 
@@ -370,10 +403,8 @@ public class Jogo {
     }
 
     /**
-     * Dado um comando, processa-o (ou seja, executa-o)
-     * 
-     * @param comando O Comando a ser processado.
-     * @return true se o comando finaliza o jogo, caso contrário false.
+     * @param comando O comando a ser processado.
+     * @return A mensagem impressa na interface a partir de suas escolhas.
      */
     private String processarComando(Comando comando) {
         if (comando.ehDesconhecido()) {
@@ -397,7 +428,8 @@ public class Jogo {
     /**
      * Responsável pela ação de investigar nas salas do castelo.
      * 
-     * @return true caso o comando finalize o jogo, caso contrário false.
+     * @return A mensagem impressa na interface a partir da investtigação de
+     *         determinadas salas.
      */
     private String investigar() {
         String mensagemRetorno = "";
@@ -419,7 +451,8 @@ public class Jogo {
      * Reponsável pela interação do aventureiro com o porão secreto.
      * 
      * @param saida A sala que da acesso ao porão para ajustar a saída.
-     * @return true caso o jogador erre o enigma e morra, caso contrário false.
+     * @return A mensagem impressa na interface a partir de suas interações no
+     *         porão.
      */
     private String interagirComPorao(Ambiente saida) {
         SalaNPC porao = new SalaNPC("um porão um pouco escuro", "esfinge", "uma esfinge com feição séria");
@@ -432,6 +465,9 @@ public class Jogo {
                 + " Preste atenção, não repetirei novamente\".";
     }
 
+    /**
+     * @return Um enigmas aleatório específico do NPC na sala.
+     */
     public String gerarEnigma() {
         return ((SalaNPC) salaAtual).getEnigmaAleatorio();
     }
@@ -451,7 +487,7 @@ public class Jogo {
     /**
      * Responsável pela interação com o portão da segunda fase.
      * 
-     * @return true caso o aventureiro abra, caso contrário false.
+     * @return A mensagem impressa na interface a partir de suas escolhas.
      */
     private String interagirComPortao() {
         if (!possuiItem("Chave do Grande Portão")) {
@@ -464,10 +500,8 @@ public class Jogo {
                 + aventureiro.removerItem("Chave do Grande Portão");
     }
 
-    // Implementacoes dos comandos do usuario
-
     /**
-     * Printe informacoes de ajuda.
+     * @return Os comandos existentes para ajuda.
      */
     private String imprimirAjuda() {
         return "\nSeus comandos são: " + analisador.mostrarComandos();
@@ -516,7 +550,8 @@ public class Jogo {
      * 
      * @param sala A sala com inimigo que o aventureiro entrou.
      * @param dano O dano que o aventureiro recebe do inimigo.
-     * @return true se o aventureiro morre na sala, caso contrário false.
+     * @return A mensagem impressa na interface. Diferenciando caso o
+     *         aventureiro morra ou não na sala.
      */
     private String interagirComSalaInimigo(SalaDano sala, int dano) {
         String mensagemRetorno = "\n\nVocê é surpreendido por um esqueleto que surge do seu ponto cego."
@@ -534,6 +569,9 @@ public class Jogo {
                 + "\nNão há mais nada na sala.";
     }
 
+    /**
+     * @return A vida do aventureiro.
+     */
     public int getVidaAventureiro() {
         return aventureiro.getPontosDeVida();
     }

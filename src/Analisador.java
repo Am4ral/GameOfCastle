@@ -1,24 +1,24 @@
 import java.util.Scanner;
 
 /**
- * Esta classe eh parte da aplicacao "World of Zuul".
- * "World of Zuul" eh um jogo de aventura muito simples, baseado em texto.
+ * Esta classe é parte da aplicação "Game Of Castle".
  * 
- * Esse analisador le a entrada do usuario e tenta interpreta-la como um
- * comando "Adventure". Cada vez que eh chamado ele le uma linha do terminal
- * e tenta interpretar a linha como um comando de duas palavras. Ele retorna
+ * Esse analisador lê a entrada do usuário e tenta interpretá-la. 
+ * Cada vez que é chamado, ele lê uma linha do terminal e tenta 
+ * interpretá-la como um comando de duas palavras. Ele retorna
  * o comando como um objeto da classe Comando.
  *
  * O analisador tem um conjunto de palavras de comando conhecidas. Ele compara
- * a entrada do usuario com os comandos conhecidos, e se a entrada nao eh um
- * dos comandos conhecidos, ele retorna um objeto comando que eh marcado como
+ * a entrada do usuário com os comandos conhecidos. Se a entrada nao é um
+ * dos comandos conhecidos, ele retorna um objeto comando que é marcado como
  * um comando desconhecido.
  * 
- * @author Michael Kölling and David J. Barnes
- * @version 2016.02.29
+ * @author Michael Kölling and David J. Barnes, João Pedro Ramalho e Renan Ribeiro
+ * Pereira
+ * @version 01.12.2023
  */
 public class Analisador {
-    private PalavrasComando comandos; // guarda todas as palavras de comando validas
+    private PalavrasComando comandos;
 
     /**
      * Cria um analisador para ler do terminal.
@@ -28,7 +28,7 @@ public class Analisador {
     }
 
     /**
-     * @return O proximo comando do usuario
+     * @return O próximo comando do usuário.
      */
     public Comando getComando(String inputLinha) {
         String palavra1 = null;
@@ -57,7 +57,7 @@ public class Analisador {
     }
 
     /**
-     * Imprime a lista de palavras de comandos válidas.
+     * @return A lista de palavras de comandos válidos.
      */
     public String mostrarComandos() {
         return comandos.mostrarTodos();

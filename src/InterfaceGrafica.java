@@ -19,42 +19,45 @@ import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class InterfaceGrafica {
     private JFrame janela;
     private LineBorder bordaPaineis;
-
     private JLabel rotuloVida;
     private JLabel rotuloItens;
     private JLabel rotuloArma;
     private JLabel rotuloNome;
-
     private JLabel valorVida;
     private JLabel valorNome;
     private JLabel armaAventureiro;
-
     private JPanel painelEsquerda;
     private JPanel painelDireita;
     private JLabel painelCentro;
     private JPanel painelBaixo;
     private JPanel painelItens;
-
     private JLabel imagemMapa;
     private JLabel tituloFase;
     private JScrollPane painelTexto;
-
     private JTextArea textoJogo;
     private JTextField inputUsuario;
     private JLabel rotuloInserirResposta;
-
     private JButton botaoEnviarFase1;
     private JButton botaoEnviarFase2;
+    private JButton botaoEnviarFase3;
     private JButton botaoIniciar;
-
     private ArrayList<ImageIcon> imagensMapa;
     private Jogo jogo;
     private Font fonteRotulo;
     private Font fonteValor;
+    private ImageIcon imagemIconeFinal;
+    private ImageIcon imagemIconePocao;
+    private ImageIcon imagemIconeCastelo;
+    private ImageIcon imagemIconeAventureiro;
+    private ImageIcon imagemIconeChave;
+    private ImageIcon imagemIconeMago;
+    private ImageIcon iconeArma;
 
     public InterfaceGrafica() {
         jogo = new Jogo();
@@ -64,6 +67,7 @@ public class InterfaceGrafica {
 
         botaoEnviarFase1 = new JButton("Enviar");
         botaoEnviarFase2 = new JButton("Enviar");
+        botaoEnviarFase3 = new JButton("Enviar");
 
         botaoIniciar = new JButton("Iniciar");
         botaoIniciar.setEnabled(false);
@@ -111,6 +115,19 @@ public class InterfaceGrafica {
         imagensMapa.add(new ImageIcon("../assets/MapaFase2.png"));
         imagensMapa.add(new ImageIcon("../assets/MapaFase3.png"));
 
+        ImageIcon imagemIcone = new ImageIcon("../assets/CoracaoDeGelo2.png");
+        imagemIconeFinal = new ImageIcon(imagemIcone.getImage().getScaledInstance(60, 60, 0));
+        imagemIcone = new ImageIcon("../assets/Pocao.png");
+        imagemIconePocao = new ImageIcon(imagemIcone.getImage().getScaledInstance(60, 60, 0));
+        imagemIcone = new ImageIcon("../assets/Castelo.png");
+        imagemIconeCastelo = new ImageIcon(imagemIcone.getImage().getScaledInstance(60, 60, 0));
+        imagemIcone = new ImageIcon("../assets/Aventureiro.png");
+        imagemIconeAventureiro = new ImageIcon(imagemIcone.getImage().getScaledInstance(60, 60, 0));
+        imagemIcone = new ImageIcon("../assets/Chave.png");
+        imagemIconeChave = new ImageIcon(imagemIcone.getImage().getScaledInstance(60, 60, 0));
+        imagemIcone = new ImageIcon("../assets/Mago.png");
+        imagemIconeMago = new ImageIcon(imagemIcone.getImage().getScaledInstance(60, 60, 0));
+
         botaoIniciar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -133,17 +150,16 @@ public class InterfaceGrafica {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String retorno = jogo.jogarFase1(getComandoUsuario());
-                System.out.println(jogo.getItensAventureiro());
                 if (retorno.contains("Você é incapaz de se defender...")) {
                     atualizarVida(jogo.getVidaAventureiro());
                     atualizarTextoJogo(imprimirComandoUsuario() + retorno + jogo.imprimirDerrota());
-                    esperar();
+                    atualizarVida(0);
                     encerrarJogo();
                 } else if (retorno.contains("vitorioso")) {
                     atualizarTextoJogo(imprimirComandoUsuario() + retorno);
                     iniciarFase2();
                 } else if (retorno.equals("sair")) {
-                    ConfirmarSaida();
+                    confirmarSaida();
                 } else {
                     atualizarTextoJogo(imprimirComandoUsuario() + retorno);
                 }
@@ -156,22 +172,59 @@ public class InterfaceGrafica {
         botaoEnviarFase2.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String retorno = jogo.jogarFase2(getComandoUsuario());
+                String retorno = jogo.tratarComando(getComandoUsuario());
                 if (retorno.contains("morto")) {
                     atualizarTextoJogo(imprimirComandoUsuario() + retorno);
+                    atualizarVida(0);
                     encerrarJogo();
                 } else if (retorno.contains("portão se abre")) {
+                    atualizarItens(jogo.getItensAventureiro());
                     atualizarTextoJogo(imprimirComandoUsuario() + retorno);
                     iniciarFase3();
                 } else if (retorno.equals("sair")) {
-                    ConfirmarSaida();
+                    confirmarSaida();
                 } else if (retorno.contains("porão")){
                     atualizarTextoJogo(imprimirComandoUsuario() + retorno);
-                    atualizarTextoJogo(jogo.responderEnigma());
+                    String enigma = jogo.gerarEnigma();
+                    String resposta = JOptionPane.showInputDialog(null, enigma + "\n\nNão utilize acentuação e escreva no singular!", "Enigma Esfinge", 3);
+                    if(resposta == null){
+                        jogo.finalizarJogador();
+                        resposta = "";
+                    }
+                    atualizarTextoJogo(jogo.analisarRespostaEnigmaEsfinge(resposta, enigma));
                     if(jogo.getVidaAventureiro() == 0){
+                        atualizarVida(jogo.getVidaAventureiro());
                         encerrarJogo();
                     }
+                    JOptionPane.showMessageDialog(null, "Parabéns, você acertou!", "Acerto", 1, imagemIconeChave);
                 } else {
+                    atualizarTextoJogo(imprimirComandoUsuario() + retorno);
+                }
+
+                atualizarVida(jogo.getVidaAventureiro());
+                atualizarItens(jogo.getItensAventureiro());
+                limparCampoInput();
+            }
+        });
+
+        botaoEnviarFase3.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String retorno = jogo.tratarComando(getComandoUsuario());
+                if(retorno.contains("Você está morto")){
+                    atualizarTextoJogo(retorno);
+                    atualizarVida(0);
+                    encerrarJogo();
+                } else if (retorno.equals("sair")) {
+                    confirmarSaida();
+                } else if (retorno.contains("coração")) {
+                    atualizarTextoJogo(retorno);
+                    atualizarItens(jogo.getItensAventureiro());
+                    limparCampoInput();
+                    JOptionPane.showMessageDialog(null, "Parabéns, você derrotou o Dragão e venceu o jogo!", "Vitória", 1, imagemIconeFinal);
+                    encerrarJogo();
+                }
+                else {
                     atualizarTextoJogo(imprimirComandoUsuario() + retorno);
                 }
 
@@ -271,7 +324,7 @@ public class InterfaceGrafica {
         }
     }
 
-    private void ConfirmarSaida() {
+    private void confirmarSaida() {
         limparCampoInput();
         if (JOptionPane.showConfirmDialog(null, "Você tem certeza que deseja sair do jogo?", "Confirmação de Saída",
                 JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
@@ -281,9 +334,14 @@ public class InterfaceGrafica {
     }
 
     private void encerrarJogo() {
-        atualizarVida(0);
+        JOptionPane.showMessageDialog(null, "Vamos salvar a sua campanha em um arquivo de log!\nO arquivo \"arquivoLog\" será salvo na pasta do jogo.", "Arquivo", 1);
+        try(FileWriter arq = new FileWriter("arquivoLog")){
+            arq.write(textoJogo.getText());
+        } catch (IOException e){
+            JOptionPane.showMessageDialog(null, "Falha ao salvar arquivo!", "Falha", JOptionPane.ERROR_MESSAGE);
+        }
         esperar();
-        JOptionPane.showMessageDialog(null, "Obrigado por jogar Game Of Castlle!");
+        JOptionPane.showMessageDialog(null, "Obrigado por jogar Game Of Castlle!", "Agradecimento", 1, imagemIconeCastelo);
         System.exit(0);
     }
 
@@ -296,7 +354,19 @@ public class InterfaceGrafica {
     }
 
     private void atualizarArma(String arma) {
-        armaAventureiro.setText(arma);
+        if (arma.equals("Revólver")){
+            iconeArma = new ImageIcon("../assets/Revolver.png");
+            armaAventureiro.setIcon(new ImageIcon(iconeArma.getImage().getScaledInstance(80, 80, 0)));
+        } else if (arma.equals("Estilingue")) {
+            iconeArma = new ImageIcon("../assets/Estilingue.png");
+            armaAventureiro.setIcon(new ImageIcon(iconeArma.getImage().getScaledInstance(80, 80, 0)));
+        } else if (arma.equals("Espada")) {
+            iconeArma = new ImageIcon("../assets/Espada.png");
+            armaAventureiro.setIcon(new ImageIcon(iconeArma.getImage().getScaledInstance(80, 80, 0)));
+        } else if (arma.equals("Arco")) {
+            iconeArma = new ImageIcon("../assets/Arco.png");
+            armaAventureiro.setIcon(new ImageIcon(iconeArma.getImage().getScaledInstance(80, 80, 0)));
+        }
     }
 
     private void atualizarNome(String arma) {
@@ -342,26 +412,26 @@ public class InterfaceGrafica {
         tituloFase.setText("Fase 2");
         painelBaixo.remove(botaoEnviarFase1);
         painelBaixo.add(botaoEnviarFase2);
-        jogo.criarCenarioFase2();
-        JOptionPane.showMessageDialog(null, "Parabéns, você passou para a Fase 2!");
+        JOptionPane.showMessageDialog(null, "Você passou para a Fase 2!", "Parabéns", 1, imagemIconeCastelo);
         atualizarTextoJogo(jogo.imprimirContextoFase2());
     }
 
     private void iniciarFase3(){
         imagemMapa.setIcon(new ImageIcon(imagensMapa.get(2).getImage().getScaledInstance(550, 500, 0)));
         tituloFase.setText("Fase 3");
-        inputUsuario.setEnabled(false);
-        botaoEnviarFase2.setEnabled(false);
-        jogo.criarCenarioFase3();
-        JOptionPane.showMessageDialog(null, "Parabéns, você passou para a Fase 3!");
-        atualizarTextoJogo(jogo.imprimirContextoFase3() + jogo.interagirComMago());
-        String retorno = jogo.finalizar();
-        if(retorno.contains("Você está morto")){
-            atualizarTextoJogo(retorno);
-            encerrarJogo();
-        }else{
-            atualizarTextoJogo(retorno);
+        painelBaixo.remove(botaoEnviarFase2);
+        painelBaixo.add(botaoEnviarFase3);
+        JOptionPane.showMessageDialog(null, "Você passou para a Fase 3!", "Parabéns", 1, imagemIconeCastelo);
+        atualizarTextoJogo(jogo.imprimirContextoFase3());
+        String enigma = "";
+        String resposta = "";
+        if(JOptionPane.showConfirmDialog(null, "Gostaria de jogar um jogo comigo?", "Mago Mershmann",
+                JOptionPane.YES_NO_OPTION, 3, imagemIconeMago) == JOptionPane.YES_OPTION){
+                enigma = jogo.gerarEnigma();
+                resposta = JOptionPane.showInputDialog(null, "Que bom aventureiro! Eis a sua pergunta: \n\n" + enigma
+                + "\n\nNão utilize acentuação e digite apenas uma palavra!", "Mago Mershmann", 3);
         }
+        atualizarTextoJogo(jogo.analisarRespostaEnigmaDoMago(resposta, enigma));
     }
 
     private void mostrarTextoAtual() {
@@ -374,7 +444,7 @@ public class InterfaceGrafica {
 
         atualizarTextoJogo(jogo.imprimirBoasVindas());
 
-        jogo.personalizarAventureiro(JOptionPane.showInputDialog("Insira seu nome:"));
+        jogo.personalizarAventureiro((String) JOptionPane.showInputDialog(null, "Aventureiro, informe o seu nome:", "Nome", 1, imagemIconeAventureiro, null, ""));
 
         botaoIniciar.setEnabled(true);
         inputUsuario.setEditable(true);

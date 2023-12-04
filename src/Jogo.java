@@ -7,8 +7,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.swing.JOptionPane;
-
 /**
  * Essa eh a classe principal da aplicacao "World of Zull".
  * "World of Zuul" eh um jogo de aventura muito simples, baseado em texto.
@@ -84,7 +82,7 @@ public class Jogo {
         salaAtual = salaEntrada; // ambiente em que é iniciado o jogo
     }
 
-    public void criarCenarioFase2() {
+    private void criarCenarioFase2() {
         Ambiente salao;
         salao = new Ambiente("um salão enorme");
 
@@ -108,7 +106,7 @@ public class Jogo {
         salao.ajustarSaida("Sala6", ambientes.get(1));
         salao.ajustarSaida("Sala7", ambientes.get(2));
         salao.ajustarSaida("Sala8", ambientes.get(3));
-        salao.ajustarSaida("Portão", new Ambiente("um enorme portão de metal"));
+        salao.ajustarSaida("Portao", new Ambiente("um enorme portão de metal"));
 
         sala5.ajustarSaida("Salao", salao);
         sala6.ajustarSaida("Salao", salao);
@@ -118,15 +116,14 @@ public class Jogo {
         salaAtual = salao;
     }
 
-    public String criarCenarioFase3() {
+    private void criarCenarioFase3() {
 
         SalaNPC corredor = new SalaNPC("um corredor extenso", "Merschmann", "um mago além de seu tempo");
         SalaDano salaTrono = new SalaDano("covil do Dragão", 99);
 
-        corredor.ajustarSaida("Portão", salaTrono);
+        corredor.ajustarSaida("Portao", salaTrono);
 
         salaAtual = corredor;
-        return salaAtual.getDescricaoLonga();
     }
 
     /**
@@ -201,13 +198,12 @@ public class Jogo {
      * @throws Exception
      */
     public String jogarFase1(String comandoUsuario) {
-        boolean estaPreparado = estaPreparado(armasItens.get(aventureiro.getArma()));
+        boolean estaPreparado = possuiItem(armasItens.get(aventureiro.getArma()));
         String mensagemRetorno = "";
         String retornoComando = "";
 
-        if (!estaPreparado && temChave()) {
-            Comando comando = analisador.getComando(comandoUsuario);
-            retornoComando = processarComando(comando);
+        if (!estaPreparado && possuiItem("Chave simples")) {
+            retornoComando = tratarComando(comandoUsuario);
             if (!retornoComando.equals("sair")) {
                 return retornoComando;
             }
@@ -237,15 +233,10 @@ public class Jogo {
         return mensagemRetorno;
     }
 
-    public String jogarFase2(String comandoUsuario) {
-        Comando comando = analisador.getComando(comandoUsuario);
-        return processarComando(comando);
-    }
-
     /**
-     * Rotina e controle das decisões realizadas na fase 3.
+     * Rotina e controle das decisões realizadas.
      */
-    public String jogarFase3(String comandoUsuario) {
+    public String tratarComando(String comandoUsuario) {
         Comando comando = analisador.getComando(comandoUsuario);
         return processarComando(comando);
     }
@@ -265,12 +256,8 @@ public class Jogo {
      * 
      * @return true se possui o item, caso contrário false.
      */
-    private boolean estaPreparado(String item) {
+    private boolean possuiItem(String item) {
         return aventureiro.existeItem(item);
-    }
-
-    private boolean temChave() {
-        return aventureiro.existeItem("Chave simples");
     }
 
     /**
@@ -294,7 +281,7 @@ public class Jogo {
         String mensagemRetorno = "\n\nVocê abre o portão e entrando na sala, você aprecia a imensidão do local."
         + "\nDe repente, duas luzes azuis acendem no teto e você começa a ouvir barulhos de respiração profunda ecoando no local."
         + "\nUm dragão se revela completamente, descendo do teto."
-        + "\nVocê perturbou seu descanso... Ele sopra um enorme bafo gelado."
+        + " Você perturbou seu descanso... Ele sopra um enorme bafo gelado."
         + "\nVocê se lembra de tudo que passou até chegar nesse momento. Tudo isso não pode ter sido em vão. Então, você se prepara e começa o combate.";
 
         SalaDano salaTrono = ((SalaDano) salaAtual);
@@ -333,6 +320,8 @@ public class Jogo {
      * Imprime o contexto da fase 2.
      */
     public String imprimirContextoFase2() {
+        criarCenarioFase2();
+
         return "\n\nAs portas agora estão abertas e, então, você decide avançar."
                 + "\nVocê percorre um extenso corredor mal iluminado até alcançar um salão imenso que dá acesso a duas portas à esquerda e a duas portas à direita."
                 + "\nAo centro, encontra-se um enorme portão feito de ferro."
@@ -344,12 +333,20 @@ public class Jogo {
      * Impressão do contexto da fase 3.
      */
     public String imprimirContextoFase3() {
-        return "\n\nOutro corredor mal iluminado, mas..."
+
+        criarCenarioFase3();
+
+        return salaAtual.getDescricaoLonga()
+                + "\n\nOutro corredor mal iluminado, mas..."
                 + "\nAo fundo, um homem com vestes que impossibilitam ver seu rosto encontra-se iluminado por uma única tocha."
                 + "\nAinda mais ao fundo, há outra porta de metal, iluminada por duas tochas em cada lateral."
                 + "\nCiente de que não há outro caminho, você avança."
                 + "\nA cada passo, você se aproxima mais do homem que permanece estático."
-                + "\nQuando você passa ao seu lado, ele diz:";
+                + "\nO homem retira seu manto revelando ser um mago. Quando você passa ao seu lado, ele diz:\n"; 
+    }
+
+    public void finalizarJogador(){
+        aventureiro.recebeDano(getVidaAventureiro());
     }
 
     /**
@@ -439,16 +436,16 @@ public class Jogo {
                 + " Preste atenção, não repetirei novamente\".";
     }
 
-    public String responderEnigma() {
-        String enigma = ((SalaNPC) salaAtual).getEnigmaAleatorio();
-        String resposta = JOptionPane.showInputDialog(enigma + "\n\nNão utilize acentuação e escreva no singular!");
+    public String gerarEnigma(){
+        return ((SalaNPC) salaAtual).getEnigmaAleatorio();
+    }
 
+    public String analisarRespostaEnigmaEsfinge(String resposta, String enigma) {
         if (((SalaNPC) salaAtual).acertouEnigma(resposta.toLowerCase(), enigma)) {
-            JOptionPane.showMessageDialog(null, "Parabéns, você acertou!");
-            return aventureiro.adicionarItem("Chave do Grande Portão", "uma chave detalhada, com entalhes em metal.")
-                    + "\n\nA esfinge some e um baú aparece."
+            return  "\n\nA esfinge some e um baú aparece."
                     + "\nVocê abre, encontra uma chave muito bem detalhada e pega."
-                    + salaAtual.getDescricaoLonga();
+                    + aventureiro.adicionarItem("Chave do Grande Portão", "uma chave detalhada, com entalhes em metal.")
+                    + "\n\n" + salaAtual.getDescricaoLonga();
         }
 
         aventureiro.recebeDano(aventureiro.getPontosDeVida());
@@ -461,13 +458,14 @@ public class Jogo {
      * @return true caso o aventureiro abra, caso contrário false.
      */
     private String interagirComPortao() {
-        if (!estaPreparado("Chave do Grande Portão")) {
+        if (!possuiItem("Chave do Grande Portão")) {
             return "\n\nHá uma fechadura..."
                     + "\nTalvez exista uma chave capaz de abrí-la.";
         }
 
         return "\n\nVocê abre a fechadura com a chave que encontrou."
-                + "\nO portão se abre...";
+                + "\nO portão se abre..."
+                + aventureiro.removerItem("Chave do Grande Portão");
     }
 
     // Implementacoes dos comandos do usuario
@@ -504,11 +502,11 @@ public class Jogo {
             } else {
                 salaAtual = proximaSala;
                 if (proximaSala.getDescricao().equals("covil do Dragão")) {
-                    retorno = "";
+                    retorno = finalizar();
                 }
             }
 
-            if (!retorno.equals("\nVocê já visitou essa sala...") && !retorno.contains("morto") && !retorno.contains("portão se abre")) {
+            if (!retorno.equals("\nVocê já visitou essa sala...") && !retorno.contains("morto") && !retorno.contains("portão se abre") && !retorno.contains("bafo gelado")) {
                 retorno += "\n\n" + salaAtual.getDescricaoLonga();
             }
         }
@@ -588,39 +586,21 @@ public class Jogo {
     }
 
     /**
-     * Responsável pelo contexto de interação com o Mago presente na terceira fase.
-     */
-    public String interagirComMago() {
-        String mensagemRetorno = "";
-
-        if (JOptionPane.showConfirmDialog(null, "Gostaria de jogar um jogo comigo?", "Interação com o Mago",
-                JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-            mensagemRetorno += responderEnigmaDoMago();
-        }
-
-        return mensagemRetorno += "\nVocê segue seu caminho até o portão."
-                + salaAtual.getDescricaoLonga();
-    }
-
-    /**
      * Criação do contexto de resposta do enigma do mago.
      */
-    private String responderEnigmaDoMago() {
-        String enigma = ((SalaNPC) salaAtual).getEnigmaAleatorio();
-        String mensagemRetorno = "\nO homem retira seu manto revelando ser um mago.";
+    public String analisarRespostaEnigmaDoMago(String resposta, String enigma) {
+        String mensagemRetorno = "";
 
-        String resposta = JOptionPane.showInputDialog(null, "\"Que bom aventureiro! Eis a sua pergunta: \n\n" + enigma
-                + "\n\nNão utilize acentuação e digite apenas uma palavra!");
-
-        if (((SalaNPC) salaAtual).acertouEnigma(resposta, enigma)) {
-            mensagemRetorno += "\n\n\"Parabéns colega! Tome esse presente.\""
-                    + "\nVocê recebe uma poção de cura e toma."
+        if (((SalaNPC) salaAtual).acertouEnigma(resposta.toLowerCase(), enigma) && !enigma.equals("")) {
+            mensagemRetorno += "\n\"Parabéns colega! Tome esse presente.\". Você recebe uma poção de cura e toma."
                     + aventureiro.curarVida();
         } else {
             mensagemRetorno += "\n\"Está tudo bem, as vezes nós erramos...\"";
         }
 
         return mensagemRetorno += "\nVocê agradece e se vira para partir."
-                + "\nQuando vira novamente para trás, o mago não está mais lá.";
+                + " Quando vira novamente para trás, o mago não está mais lá."
+                + "\nVocê segue seu caminho até o portão. \n\n"
+                + salaAtual.getDescricaoLonga();
     }
 }

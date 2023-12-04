@@ -55,6 +55,7 @@ public class NPC {
             if(indexEnigma == cont){
                 return enigmas.get(resposta);
             }
+            cont++;
         }
 
         return null;

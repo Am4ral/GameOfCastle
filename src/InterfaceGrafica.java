@@ -22,6 +22,23 @@ import java.awt.event.ActionListener;
 import java.io.FileWriter;
 import java.io.IOException;
 
+/**
+ * Classe Ambiente - um ambiente em um jogo adventure.
+ *
+ * Esta classe eh parte da aplicacao "Game Of Castle".
+ * "World of Zuul" eh um jogo de aventura muito simples, baseado em texto.
+ *
+ * Um "ambientes.Ambiente" representa uma localizacao no cenario do jogo. Ele eh
+ * conectado aos outros ambientes atraves de saidas. As saidas sao
+ * nomeadas como norte, sul, leste e oeste. Para cada direcao, o ambiente
+ * guarda uma referencia para o ambiente vizinho, ou null se nao ha
+ * saida naquela direcao.
+ * 
+ * @author Michael Kölling and David J. Barnes (traduzido por Julio Cesar Alves)
+ * @author João Pedro, Renan
+ * @version 2011.07.31 (2016.02.01)
+ */
+
 public class InterfaceGrafica {
     private JFrame janela;
     private LineBorder bordaPaineis;
@@ -59,6 +76,10 @@ public class InterfaceGrafica {
     private ImageIcon imagemIconeMago;
     private ImageIcon iconeArma;
 
+    /**
+     * Inicia todas as telas, textos, imagens, eventos de botões,
+     * fontes, o Jogo, e outros itens necessários para a interface gráfica.
+     */
     public InterfaceGrafica() {
         jogo = new Jogo();
         janela = new JFrame("GAME OF CASTLLE");
@@ -183,16 +204,17 @@ public class InterfaceGrafica {
                     iniciarFase3();
                 } else if (retorno.equals("sair")) {
                     confirmarSaida();
-                } else if (retorno.contains("porão")){
+                } else if (retorno.contains("porão")) {
                     atualizarTextoJogo(imprimirComandoUsuario() + retorno);
                     String enigma = jogo.gerarEnigma();
-                    String resposta = JOptionPane.showInputDialog(null, enigma + "\n\nNão utilize acentuação e escreva no singular!", "Enigma Esfinge", 3);
-                    if(resposta == null){
+                    String resposta = JOptionPane.showInputDialog(null,
+                            enigma + "\n\nNão utilize acentuação e escreva no singular!", "Enigma Esfinge", 3);
+                    if (resposta == null) {
                         jogo.finalizarJogador();
                         resposta = "";
                     }
                     atualizarTextoJogo(jogo.analisarRespostaEnigmaEsfinge(resposta, enigma));
-                    if(jogo.getVidaAventureiro() == 0){
+                    if (jogo.getVidaAventureiro() == 0) {
                         atualizarVida(jogo.getVidaAventureiro());
                         encerrarJogo();
                     }
@@ -211,7 +233,7 @@ public class InterfaceGrafica {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String retorno = jogo.tratarComando(getComandoUsuario());
-                if(retorno.contains("Você está morto")){
+                if (retorno.contains("Você está morto")) {
                     atualizarTextoJogo(retorno);
                     atualizarVida(0);
                     encerrarJogo();
@@ -221,10 +243,10 @@ public class InterfaceGrafica {
                     atualizarTextoJogo(retorno);
                     atualizarItens(jogo.getItensAventureiro());
                     limparCampoInput();
-                    JOptionPane.showMessageDialog(null, "Parabéns, você derrotou o Dragão e venceu o jogo!", "Vitória", 1, imagemIconeFinal);
+                    JOptionPane.showMessageDialog(null, "Parabéns, você derrotou o Dragão e venceu o jogo!", "Vitória",
+                            1, imagemIconeFinal);
                     encerrarJogo();
-                }
-                else {
+                } else {
                     atualizarTextoJogo(imprimirComandoUsuario() + retorno);
                 }
 
@@ -237,6 +259,10 @@ public class InterfaceGrafica {
         montarInterface();
     }
 
+    /**
+     * Cria cada um dos painéis presentes na interface.
+     * Painéis de item, de input e texto, e de status do jogador.
+     */
     public void montarInterface() {
         janela.setLayout(new BorderLayout());
         janela.setSize(1200, 700);
@@ -312,10 +338,19 @@ public class InterfaceGrafica {
         janela.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
-    private String imprimirComandoUsuario(){
+    /**
+     * Formata o comando digitado pelo usuário para ser futuramente
+     * exibido na área de texto.
+     * 
+     * @return String contendo o comando digitado pelo usuário
+     */
+    private String imprimirComandoUsuario() {
         return "\n\n>> " + getComandoUsuario();
     }
 
+    /**
+     * Pausa o programa por 500ms.
+     */
     private void esperar() {
         try {
             Thread.sleep(500);
@@ -324,6 +359,11 @@ public class InterfaceGrafica {
         }
     }
 
+    /**
+     * Mostra uma tela perguntando se o jogador realmente deseja fechar o jogo
+     * quando
+     * ele digita a opção "sair".
+     */
     private void confirmarSaida() {
         limparCampoInput();
         if (JOptionPane.showConfirmDialog(null, "Você tem certeza que deseja sair do jogo?", "Confirmação de Saída",
@@ -333,28 +373,47 @@ public class InterfaceGrafica {
         }
     }
 
+    /**
+     * Finaliza o jogo, salvando a camapanha do jogador em um arquivo de log.
+     */
     private void encerrarJogo() {
-        JOptionPane.showMessageDialog(null, "Vamos salvar a sua campanha em um arquivo de log!\nO arquivo \"arquivoLog\" será salvo na pasta do jogo.", "Arquivo", 1);
-        try(FileWriter arq = new FileWriter("arquivoLog")){
+        JOptionPane.showMessageDialog(null,
+                "Vamos salvar a sua campanha em um arquivo de log!\nO arquivo \"arquivoLog\" será salvo na pasta do jogo.",
+                "Arquivo", 1);
+        try (FileWriter arq = new FileWriter("arquivoLog")) {
             arq.write(textoJogo.getText());
-        } catch (IOException e){
+        } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "Falha ao salvar arquivo!", "Falha", JOptionPane.ERROR_MESSAGE);
         }
         esperar();
-        JOptionPane.showMessageDialog(null, "Obrigado por jogar Game Of Castlle!", "Agradecimento", 1, imagemIconeCastelo);
+        JOptionPane.showMessageDialog(null, "Obrigado por jogar Game Of Castlle!", "Agradecimento", 1,
+                imagemIconeCastelo);
         System.exit(0);
     }
 
+    /**
+     * Limpa o campo de input para que ele possa receber a próxima instrução.
+     */
     private void limparCampoInput() {
         inputUsuario.setText("");
     }
 
+    /**
+     * Atualiza a vida do jogador após ele receber dano ou se curado.
+     * 
+     * @param int correspondende ao valor que deve ser retirado ou adicionado à
+     *            vida.
+     */
     private void atualizarVida(int valor) {
         valorVida.setText(String.valueOf(valor));
     }
 
+    /**
+     * Atualiza o ícone da arma, que aparece no painel do jogador,
+     * após ele selecionar uma durante o começo do jogo.
+     */
     private void atualizarArma(String arma) {
-        if (arma.equals("Revólver")){
+        if (arma.equals("Revólver")) {
             iconeArma = new ImageIcon("../assets/Revolver.png");
             armaAventureiro.setIcon(new ImageIcon(iconeArma.getImage().getScaledInstance(80, 80, 0)));
         } else if (arma.equals("Estilingue")) {
@@ -369,23 +428,39 @@ public class InterfaceGrafica {
         }
     }
 
+    /**
+     * Atualiza o nome do jogador, que aparece no painel do jogador,
+     * após ele digitar um durante o começo do jogo.
+     */
     private void atualizarNome(String arma) {
         valorNome.setText(arma);
     }
 
+    /**
+     * Atualiza o texto que está sendo exibido no painél de texto.
+     */
     private void atualizarTextoJogo(String texto) {
         textoJogo.append(texto);
     }
 
+    /**
+     * Recebe o comando que o jogador escreveu no painel de input.
+     */
     private String getComandoUsuario() {
         return inputUsuario.getText();
     }
 
+    /**
+     * Remove todos os itens do painel de itens do jogaodr.
+     */
     private void removerItens() {
         painelItens.removeAll();
         painelDireita.remove(painelItens);
     }
 
+    /**
+     * Atualiza os dados do painel de itens do jogador.
+     */
     private void atualizarItens(List<Item> itens) {
         removerItens();
         JLabel itemLabel;
@@ -402,11 +477,19 @@ public class InterfaceGrafica {
         painelDireita.repaint();
     }
 
+    /**
+     * Troca o botão que inicia o jogo para o botão de enviar comandos da fase 1.
+     */
     private void iniciarJogo() {
         painelBaixo.remove(botaoIniciar);
         painelBaixo.add(botaoEnviarFase1);
     }
 
+    /**
+     * Troca o botão de enviar comandos da fase 1 o jogo para o botão de enviar
+     * comandos da fase 2.
+     * E prepara a tela com as informações da fase 2.
+     */
     private void iniciarFase2() {
         imagemMapa.setIcon(new ImageIcon(imagensMapa.get(1).getImage().getScaledInstance(550, 500, 0)));
         tituloFase.setText("Fase 2");
@@ -416,7 +499,12 @@ public class InterfaceGrafica {
         atualizarTextoJogo(jogo.imprimirContextoFase2());
     }
 
-    private void iniciarFase3(){
+    /**
+     * Troca o botão de enviar comandos da fase 2 o jogo para o botão de enviar
+     * comandos da fase 3.
+     * E imprime exie os painéis de interação com o NPC da fase
+     */
+    private void iniciarFase3() {
         imagemMapa.setIcon(new ImageIcon(imagensMapa.get(2).getImage().getScaledInstance(550, 500, 0)));
         tituloFase.setText("Fase 3");
         painelBaixo.remove(botaoEnviarFase2);
@@ -425,26 +513,33 @@ public class InterfaceGrafica {
         atualizarTextoJogo(jogo.imprimirContextoFase3());
         String enigma = "";
         String resposta = "";
-        if(JOptionPane.showConfirmDialog(null, "Gostaria de jogar um jogo comigo?", "Mago Mershmann",
-                JOptionPane.YES_NO_OPTION, 3, imagemIconeMago) == JOptionPane.YES_OPTION){
-                enigma = jogo.gerarEnigma();
-                resposta = JOptionPane.showInputDialog(null, "Que bom aventureiro! Eis a sua pergunta: \n\n" + enigma
-                + "\n\nNão utilize acentuação e digite apenas uma palavra!", "Mago Mershmann", 3);
+        if (JOptionPane.showConfirmDialog(null, "Gostaria de jogar um jogo comigo?", "Mago Mershmann",
+                JOptionPane.YES_NO_OPTION, 3, imagemIconeMago) == JOptionPane.YES_OPTION) {
+            enigma = jogo.gerarEnigma();
+            resposta = JOptionPane.showInputDialog(null, "Que bom aventureiro! Eis a sua pergunta: \n\n" + enigma
+                    + "\n\nNão utilize acentuação e digite apenas uma palavra!", "Mago Mershmann", 3);
         }
         atualizarTextoJogo(jogo.analisarRespostaEnigmaDoMago(resposta, enigma));
     }
 
+    /**
+     * Realiza um scroll down na área de texto do painél.
+     */
     private void mostrarTextoAtual() {
         textoJogo.setCaretPosition(textoJogo.getDocument().getLength());
     }
 
+    /**
+     * Inicializa a interface e o jogo.
+     */
     public void exibirInterface() throws InterruptedException {
         janela.setResizable(false);
         janela.setVisible(true);
 
         atualizarTextoJogo(jogo.imprimirBoasVindas());
 
-        jogo.personalizarAventureiro((String) JOptionPane.showInputDialog(null, "Aventureiro, informe o seu nome:", "Nome", 1, imagemIconeAventureiro, null, ""));
+        jogo.personalizarAventureiro((String) JOptionPane.showInputDialog(null, "Aventureiro, informe o seu nome:",
+                "Nome", 1, imagemIconeAventureiro, null, ""));
 
         botaoIniciar.setEnabled(true);
         inputUsuario.setEditable(true);

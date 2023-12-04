@@ -1,7 +1,3 @@
-import ambientes.Ambiente;
-import ambientes.SalaDano;
-import ambientes.SalaItemPorta;
-import ambientes.SalaNPC;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -279,10 +275,10 @@ public class Jogo {
      */
     public String finalizar() {
         String mensagemRetorno = "\n\nVocê abre o portão e entrando na sala, você aprecia a imensidão do local."
-        + "\nDe repente, duas luzes azuis acendem no teto e você começa a ouvir barulhos de respiração profunda ecoando no local."
-        + "\nUm dragão se revela completamente, descendo do teto."
-        + " Você perturbou seu descanso... Ele sopra um enorme bafo gelado."
-        + "\nVocê se lembra de tudo que passou até chegar nesse momento. Tudo isso não pode ter sido em vão. Então, você se prepara e começa o combate.";
+                + "\nDe repente, duas luzes azuis acendem no teto e você começa a ouvir barulhos de respiração profunda ecoando no local."
+                + "\nUm dragão se revela completamente, descendo do teto."
+                + " Você perturbou seu descanso... Ele sopra um enorme bafo gelado."
+                + "\nVocê se lembra de tudo que passou até chegar nesse momento. Tudo isso não pode ter sido em vão. Então, você se prepara e começa o combate.";
 
         SalaDano salaTrono = ((SalaDano) salaAtual);
 
@@ -291,7 +287,7 @@ public class Jogo {
 
         if (aventureiro.getPontosDeVida() > 0) {
             mensagemRetorno += "\nApós longos minutos de combate, você derrota o dragão. Como troféu, você pega o seu coração e guarda."
-            + aventureiro.adicionarItem("Coração do Dragão", "o coração do maior dragão de gelo já existente");
+                    + aventureiro.adicionarItem("Coração do Dragão", "o coração do maior dragão de gelo já existente");
         } else {
             mensagemRetorno += imprimirDerrota();
         }
@@ -342,10 +338,10 @@ public class Jogo {
                 + "\nAinda mais ao fundo, há outra porta de metal, iluminada por duas tochas em cada lateral."
                 + "\nCiente de que não há outro caminho, você avança."
                 + "\nA cada passo, você se aproxima mais do homem que permanece estático."
-                + "\nO homem retira seu manto revelando ser um mago. Quando você passa ao seu lado, ele diz:\n"; 
+                + "\nO homem retira seu manto revelando ser um mago. Quando você passa ao seu lado, ele diz:\n";
     }
 
-    public void finalizarJogador(){
+    public void finalizarJogador() {
         aventureiro.recebeDano(getVidaAventureiro());
     }
 
@@ -436,13 +432,13 @@ public class Jogo {
                 + " Preste atenção, não repetirei novamente\".";
     }
 
-    public String gerarEnigma(){
+    public String gerarEnigma() {
         return ((SalaNPC) salaAtual).getEnigmaAleatorio();
     }
 
     public String analisarRespostaEnigmaEsfinge(String resposta, String enigma) {
         if (((SalaNPC) salaAtual).acertouEnigma(resposta.toLowerCase(), enigma)) {
-            return  "\n\nA esfinge some e um baú aparece."
+            return "\n\nA esfinge some e um baú aparece."
                     + "\nVocê abre, encontra uma chave muito bem detalhada e pega."
                     + aventureiro.adicionarItem("Chave do Grande Portão", "uma chave detalhada, com entalhes em metal.")
                     + "\n\n" + salaAtual.getDescricaoLonga();
@@ -506,7 +502,8 @@ public class Jogo {
                 }
             }
 
-            if (!retorno.equals("\nVocê já visitou essa sala...") && !retorno.contains("morto") && !retorno.contains("portão se abre") && !retorno.contains("bafo gelado")) {
+            if (!retorno.equals("\nVocê já visitou essa sala...") && !retorno.contains("morto")
+                    && !retorno.contains("portão se abre") && !retorno.contains("bafo gelado")) {
                 retorno += "\n\n" + salaAtual.getDescricaoLonga();
             }
         }
@@ -541,14 +538,30 @@ public class Jogo {
         return aventureiro.getPontosDeVida();
     }
 
+    /**
+     * Retorna a arma do aventureiro
+     * 
+     * @return String contendo o nome da arma selecionada pelo jogador
+     */
     public String getArmaAventureiro() {
         return aventureiro.getArma();
     }
 
+    /**
+     * Retorna o nome do aventureiro
+     * 
+     * @return String contendo o nome digitado pelo jogador no começo do jogo.
+     */
     public String getNomeAventureiro() {
         return aventureiro.getNome();
     }
 
+    /**
+     * Coloca a arma selecionada pelo jogador no inventário dele
+     * 
+     * @param String com o nome da arma que o jogador selecionou.
+     * @return String vazia em caso de sucesso, ou mensagem de erro em falha.
+     */
     public String setArmaAventureiro(String arma) {
         try {
             aventureiro.setArma(escolheArma(arma));
@@ -560,6 +573,11 @@ public class Jogo {
         return "";
     }
 
+    /**
+     * Retorna o inventário do jogador.
+     * 
+     * @return List<Item> contendo os itens que o jogador tem.
+     */
     public List<Item> getItensAventureiro() {
         return aventureiro.getItens();
     }
@@ -568,7 +586,11 @@ public class Jogo {
      * Responsável pelas interações do aventureiro com salas com itens.
      * 
      * @param sala A sala que o aventureiro entrou.
-     * @return true se o aventureiro destrancou a porta, caso contrário false
+     * 
+     * @return String contendo uma mensagem infomando que o jogador já visitou a
+     *         sala,
+     *         ou um texto descrevendo o que acontece caso ela ainda não tenha sido
+     *         visitada.
      */
     private String interagirComSalaItemPorta(SalaItemPorta sala) {
         if (!sala.isTrancado()) {
@@ -582,11 +604,17 @@ public class Jogo {
         return aventureiro.removerItem("Chave simples")
                 + "\n\nVocê está em " + salaAtual.getDescricao() + ".\n" + "Nela, você encontra um(a) " + municao
                 + " e guarda."
-                + aventureiro.adicionarItem(municao,"Objeto que completa uma arma específica.");
+                + aventureiro.adicionarItem(municao, "Objeto que completa uma arma específica.");
     }
 
     /**
-     * Criação do contexto de resposta do enigma do mago.
+     * Analisa se a resposta que o jogador digitou está correta
+     * 
+     * @param String contendo a resposta
+     * @param String contendo o enigma
+     * 
+     * @return em caso de sucesso retorna uma mensagem de parabéns,
+     *         em caso de falha retorna um mensagem de consolo.
      */
     public String analisarRespostaEnigmaDoMago(String resposta, String enigma) {
         String mensagemRetorno = "";

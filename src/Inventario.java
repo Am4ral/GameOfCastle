@@ -55,7 +55,7 @@ public class Inventario {
      * @throws Exception Exceção disparada caso não haja um item de nome
      *                   correspondente no inventário.
      */
-    public void removerItem(String nome){
+    public void removerItem(String nome) {
         Item item = buscarItem(nome);
         itens.remove(item);
     }

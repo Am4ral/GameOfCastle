@@ -1,11 +1,9 @@
-package ambientes;
-
 import java.util.HashMap;
 
 /**
- * Classe ambientes.Ambiente - um ambiente em um jogo adventure.
+ * Classe Ambiente - um ambiente em um jogo adventure.
  *
- * Esta classe eh parte da aplicacao "World of Zuul".
+ * Esta classe eh parte da aplicacao "Game Of Castle".
  * "World of Zuul" eh um jogo de aventura muito simples, baseado em texto.
  *
  * Um "ambientes.Ambiente" representa uma localizacao no cenario do jogo. Ele eh
@@ -15,6 +13,7 @@ import java.util.HashMap;
  * saida naquela direcao.
  * 
  * @author Michael Kölling and David J. Barnes (traduzido por Julio Cesar Alves)
+ * @author Marco Túlio, Matheus, João Pedro, Renan
  * @version 2011.07.31 (2016.02.01)
  */
 
@@ -77,11 +76,17 @@ public class Ambiente {
         return textoSaidas;
     }
 
-    public HashMap<String, Ambiente> getSaidas(){
-        
+    /**
+     * Retorna um HashMap com os ambientes de saída.
+     * Saídas: Sala1 Sala2 Sala3
+     * 
+     * @return Ambientes de saída.
+     */
+    public HashMap<String, Ambiente> getSaidas() {
+
         HashMap<String, Ambiente> ambientes = new HashMap<>();
-        
-        for(String direcao : saidas.keySet()){
+
+        for (String direcao : saidas.keySet()) {
             ambientes.put(direcao, saidas.get(direcao));
         }
         return ambientes;
@@ -89,7 +94,7 @@ public class Ambiente {
 
     /**
      * Retorna o ambiente que é alcançado se formos de um ambiente na
-     * direção "direcao". Se há um ambiente sem direção, é retornado nulo.
+     * direção "direção". Se há um ambiente sem direção, é retornado nulo.
      * 
      * @param direcao A direção da saída.
      * @return O ambiente presente na direção.
@@ -98,11 +103,20 @@ public class Ambiente {
         return saidas.get(direcao);
     }
 
-    public void visitar(){
+    /**
+     * Coloca que o ambiente já foi visitado pelo jogador
+     * 
+     */
+    public void visitar() {
         visitado = true;
     }
 
-    public boolean getVisitado(){
+    /**
+     * Informa se o ambiente já foi visitado pelo jogador
+     * 
+     * @return true para caso o ambiente tenha sido visitado, false caso o contrário
+     */
+    public boolean getVisitado() {
         return visitado;
     }
 }

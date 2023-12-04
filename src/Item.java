@@ -1,5 +1,3 @@
-package jogador;
-
 public class Item {
 
     private String nome;

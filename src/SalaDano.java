@@ -1,5 +1,3 @@
-package ambientes;
-
 import java.util.Random;
 
 public class SalaDano extends Ambiente {

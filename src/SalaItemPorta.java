@@ -1,6 +1,4 @@
-package ambientes;
-
-public class SalaItemPorta extends Ambiente{
+public class SalaItemPorta extends Ambiente {
     private String item;
     private boolean trancado;
 

@@ -1,8 +1,6 @@
-package ambientes;
 
-import entidades.NPC;
 
-public class SalaNPC extends Ambiente{
+public class SalaNPC extends Ambiente {
     private NPC npc;
 
     public SalaNPC(String descricao, String nomeNpc, String descricaoNpc) {

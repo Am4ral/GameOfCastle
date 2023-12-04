@@ -1,20 +1,19 @@
-package ambientes;
-
 import java.util.HashMap;
 
 /**
- * Classe ambientes.Ambiente - um ambiente em um jogo adventure.
+ * Classe Ambiente - um ambiente em um jogo adventure.
  *
  * Esta classe eh parte da aplicacao "World of Zuul".
  * "World of Zuul" eh um jogo de aventura muito simples, baseado em texto.
  *
- * Um "ambientes.Ambiente" representa uma localizacao no cenario do jogo. Ele eh
+ * Um "Ambiente" representa uma localizacao no cenario do jogo. Ele eh
  * conectado aos outros ambientes atraves de saidas. As saidas sao
  * nomeadas como norte, sul, leste e oeste. Para cada direcao, o ambiente
  * guarda uma referencia para o ambiente vizinho, ou null se nao ha
  * saida naquela direcao.
  * 
  * @author Michael Kölling and David J. Barnes (traduzido por Julio Cesar Alves)
+ * @author Marco Túlio, Matheus, João Pedro, Renan
  * @version 2011.07.31 (2016.02.01)
  */
 

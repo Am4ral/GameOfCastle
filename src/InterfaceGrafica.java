@@ -1,5 +1,3 @@
-import jogador.Item;
-
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -22,7 +20,7 @@ import javax.swing.border.LineBorder;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class InterfaceGrafica {
+public class  InterfaceGrafica {
     private JFrame janela;
     private LineBorder bordaPaineis;
 

@@ -3,12 +3,32 @@ package entidades;
 import java.util.HashMap;
 import java.util.Random;
 
+/**
+ * Classe NPC - um personagem interativo no jogo Game Of Castle
+ * 
+ * Essa classe é parte da aplicação "Game Of Castle".
+ * O NPC representa o personagem com o qual o usuário pode interagir durante
+ * o jogo, resolvendo enigmas.
+ * 
+ * Em diferentes contextos, cada NPC apresenta enigmas que devem ser respondidos
+ * e que modificam o rumo da história.
+ * 
+ * @author Matheus Bertoldo
+ * @version 20.11.2023
+ */
 public class NPC {
     
     private String nome;
     private String descricao;
     HashMap<String, String> enigmas;
     
+    /**
+     * Instancia o NPC a partir de nome e descrição e estabele os 
+     * enigmas que serão utilizados.
+     * 
+     * @param nome O nome do NPC.
+     * @param descricao A descrição do NPC.
+     */
     public NPC(String nome, String descricao) {
         this.nome = nome;
         this.descricao = descricao;
@@ -21,6 +41,9 @@ public class NPC {
         }
     }
 
+    /**
+     * Adiciona os enigmas genéricos de um NPC à lista de enigmas.
+     */
     private void adicionarEnigmas(){
         enigmas.put("lagrima", "\"É clara e salgada, cabe em um olho e pesa uma tonelada?\"");
         enigmas.put("porta", "\"O que dá o poder de atravessar paredes?\"");
@@ -30,6 +53,9 @@ public class NPC {
         enigmas.put("segredo", "\"O que quando você tem, quer compartilhar, mas se compartilha, não tem mais?\"");
     }
 
+    /**
+     * Adiciona os enigmas específicos de PPOO à lista de enigmas.
+     */
     private void adicionarEnigmasPPOO(){
         enigmas.put("private", "\"Qual deve ser a visibilidade dos atributos de uma classe?\"");
         enigmas.put("extends", "\"Qual a palavra utilizada para indicar que uma classe é subclasse de outra?\"");
@@ -39,12 +65,22 @@ public class NPC {
         enigmas.put("final", "\"Qual a palavra-chave que define um atributo como constante?\"");
     }
 
+    /**
+     * @return O nome do NPC.
+     */
     public String getNome() {
         return nome;
     }
+    /**
+     * @return A descrição do NPC.
+     */
     public String getDescricao() {
         return descricao;
     }
+    
+    /**
+     * @return Um enigmas aleatório presente na lista de enigmas.
+     */
     public String getEnigmaAleatorio(){
 
         Random rand = new Random();
@@ -60,6 +96,14 @@ public class NPC {
 
         return null;
     }
+
+    /**
+     * Define a partir do enigma, se a resposta enviada está correta.
+     * 
+     * @param resposta A resposta do enigma.
+     * @param enigma O enigma.
+     * @return true se a resposta está certa caso contrário false.
+     */
     public boolean acertouEnigma(String resposta, String enigma){
         String eng = enigmas.get(resposta);
         
